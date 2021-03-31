@@ -1,4 +1,3 @@
-
 /** @file
  *
  * @copyright 2021 domohuhn

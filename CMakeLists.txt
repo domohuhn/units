@@ -56,16 +56,21 @@ target_compile_features(mpl
 set_target_properties(mpl PROPERTIES LINKER_LANGUAGE CXX)
 add_library(dh::mpl ALIAS mpl)
 
+target_include_directories(mpl PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+
 
 add_library(units
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units.hpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/declaration_macros.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/dimensions.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/format_quantity.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/imperial_units.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/math.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/quantity_conversion.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/quantity.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/ratio_to_string.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/si_units.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/traits.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/unit.hpp
@@ -84,7 +89,7 @@ if(DH_UNITS_BUILD_TESTS)
 	FetchContent_Declare(
 	googletest
 	GIT_REPOSITORY https://github.com/google/googletest.git
-	GIT_TAG release-1.10.0
+	GIT_TAG v1.10.x
 	)
 
 	FetchContent_GetProperties(googletest)
@@ -109,6 +114,9 @@ if(DH_UNITS_BUILD_TESTS)
 			test/test_traits.cpp 
 			test/test_transform.cpp 
 		)
+		target_include_directories(test_dh_units PUBLIC
+			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+		)
 
 		target_link_libraries(test_dh_units PRIVATE gtest gtest_main dh::units)
 		include(GoogleTest)
@@ -123,7 +131,9 @@ endif()
 #
 
 add_executable(dh_samples samples/extension.cpp samples/mpl.cpp)
-target_link_libraries(dh_samples PUBLIC dh::units)
+target_include_directories(dh_samples PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
 
 #
 # Benchmarks
@@ -133,7 +143,7 @@ if(DH_UNITS_BUILD_BENCHMAKRS)
 	FetchContent_Declare(
 	googlebenchmark
 	GIT_REPOSITORY https://github.com/google/benchmark.git
-	GIT_TAG v1.5.0
+	GIT_TAG v1.5.2
 	)
 
 	FetchContent_GetProperties(googlebenchmark)
@@ -143,16 +153,14 @@ if(DH_UNITS_BUILD_BENCHMAKRS)
 	endif()
   	add_subdirectory(${googlebenchmark_SOURCE_DIR} ${googlebenchmark_BINARY_DIR})
 
-	#if(TARGET benchmark)
-	#	add_executable(bench_hashes 
-	#		benchmark/bench_compressed_hash.cpp
-	#		benchmark/bench_perfect_hash_generation.cpp
-	#		benchmark/bench_hashes.cpp
-	#		benchmark/bench_sort.cpp
-	#		benchmark/bench_main.cpp
-	#	)
-	#	target_link_libraries(bench_hashes PRIVATE benchmark domohuhn::hashes)
-	#endif()
+	if(TARGET benchmark)
+		add_executable(bench_dh_units 
+			benchmark/bench_baseline.cpp
+			benchmark/bench_main.cpp
+			benchmark/bench_units.cpp
+		)
+		target_link_libraries(bench_dh_units PRIVATE benchmark dh::units)
+	endif()
 
 endif()
 

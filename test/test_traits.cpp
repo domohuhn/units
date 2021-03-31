@@ -24,6 +24,8 @@ using list5 = list<unit_meter, unit_kilogram>;
 using list6 = list<unit_milligram, unit_kilometer>;
 using list7 = list<unit_kilogram, unit_meter>;
 
+
+
 static_assert( lists_contain_same_dimensions<list0,list0>::value          , "empty lists should be the same");
 static_assert( lists_contain_same_dimensions<list1,list1>::value          , "lists are the same");
 static_assert( lists_contain_same_dimensions<list1,list3>::value          , "lists only differ in prefixes");
@@ -42,7 +44,6 @@ static_assert( lists_contain_same_types<list1,list2>::value == false      , "lis
 
 // if the test compiles, this will never fail
 TEST(Units, Traits) {
-    ASSERT_TRUE(( lists_contain_same_dimensions<list0,list0>::value          ));
     ASSERT_TRUE(( lists_contain_same_dimensions<list1,list1>::value          ));
     ASSERT_TRUE(( lists_contain_same_dimensions<list1,list3>::value          ));
     ASSERT_TRUE(( lists_contain_same_dimensions<list5,list6>::value          ));

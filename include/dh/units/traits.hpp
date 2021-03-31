@@ -31,7 +31,9 @@ template<typename U1, typename U2>
 using units_have_same_dimension =  typename std::is_same<typename U1::dimension_type, typename U2::dimension_type>::type;
 
 template<typename L1, typename L2>
-struct lists_contain_same_dimensions;
+struct lists_contain_same_dimensions {
+    static constexpr bool value = false;
+};
 
 template<typename... pack1, typename... pack2>
 struct lists_contain_same_dimensions<mpl::list<pack1...>, mpl::list<pack2...>> 
@@ -66,7 +68,17 @@ struct lists_contain_same_dimensions<mpl::list<>, mpl::list<>>
 
 
 template<typename L1, typename L2>
-struct lists_contain_same_types;
+constexpr bool lists_contain_same_dimensions<L1,L2>::value;
+
+template<typename... pack1,typename... pack2>
+constexpr bool lists_contain_same_dimensions<mpl::list<pack1...>, mpl::list<pack2...>>::value;
+
+
+
+template<typename L1, typename L2>
+struct lists_contain_same_types {
+    static constexpr bool value = false;
+};
 
 template<typename... pack1, typename... pack2>
 struct lists_contain_same_types<dh::mpl::list<pack1...>, dh::mpl::list<pack2...>> 
@@ -77,6 +89,12 @@ struct lists_contain_same_types<dh::mpl::list<pack1...>, dh::mpl::list<pack2...>
 
     static constexpr bool value = sizeof...(pack1) == sizeof...(pack2) && combined_list::size == sizeof...(pack1);
 };
+
+template<typename L1, typename L2>
+constexpr bool lists_contain_same_types<L1,L2>::value;
+
+template<typename... pack1,typename... pack2>
+constexpr bool lists_contain_same_types<mpl::list<pack1...>, mpl::list<pack2...>>::value;
 
 template <typename T, typename = void>
 struct is_dh_quantity : std::false_type {};

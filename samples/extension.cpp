@@ -7,10 +7,11 @@
  */
 
 #include "dh/units.hpp"
+#include <iostream>
 
 struct pixel_dimension {
     static std::string name() {
-        return "pixel";
+        return "pix";
     }
 };
 
@@ -43,5 +44,7 @@ int main() {
     pixel px(32);
     pixel2<int> px2(10);
     auto sum = px +px2;
+    std::cout<<sum<<"\n";
+    std::cout<<px*px2<<"\n";
     return sum.count();
 }

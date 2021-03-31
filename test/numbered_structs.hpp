@@ -15,6 +15,10 @@ template<intmax_t v>
 struct accumulate_type_test_struct {
     static constexpr intmax_t value = v;
 };
+
+template<intmax_t v>
+constexpr intmax_t accumulate_type_test_struct<v>::value;
+
 using zero = accumulate_type_test_struct<0>;
 using one = accumulate_type_test_struct<1>;
 using two = accumulate_type_test_struct<2>;

@@ -204,7 +204,7 @@ make
 make install
 ```
 
-Currently, the library is only tested with gcc.
+Currently, the library is only tested with gcc. However, it should also compile with Visual Studio 19 (at least the samples work).
 
 ## Using the library
 
@@ -224,6 +224,22 @@ Usage examples for the library can be found in the samples directory.
 # Tests
 
 Unit tests are done with googletest. Sources for the tests are in the directory test.
+
+
+# Benchmarks
+
+There are basic benchmarks in the benchmark directory. Running the benchmarks on my machine with gcc 7 gives:
+
+| Benchmark                | Time        | 
+| :---                     | :----       |
+| units_addition           | 6.49 ns     |
+| units_multiplication     | 6.48 ns     |
+| units_division           |  17.7 ns    |
+| baseline_addition        | 6.44 ns     |
+| baseline_multiplication  | 6.48 ns     |
+| baseline_division        | 17.6 ns     |
+
+As you can see, there is no difference between using raw doubles as baseline or the units library.
 
 # License
 This project is licensed under the Mozilla Public Lencse 2.0. Therefore, you should be able to use it in pretty much any other project for any purpose.

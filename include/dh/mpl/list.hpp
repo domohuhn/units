@@ -33,6 +33,12 @@ auto call( mpl::list<pack...> ) -> typename std::decay<decltype(functor::call(pa
     return functor::call(pack::value...);
 }
 
+template<typename... pack>
+constexpr size_t list<pack...>::size;
+
+template<typename... pack>
+constexpr bool list<pack...>::empty;
+
 using empty_list = list<>;
 
 }
