@@ -60,3 +60,8 @@ TEST(Units, Traits) {
     ASSERT_TRUE(( lists_contain_same_types<list1,list2>::value == false      ));
 }
 
+using list8 = list<unit_kelvin,unit_kilogram, unit_square_meter, unit_per_square_second>;
+using extracted = extract_base_units_t<unit_kelvin,unit_newton,unit_meter>;
+
+static_assert( lists_contain_same_dimensions<extracted,list8>::value          , "extraction should work");
+static_assert( is_derived_unit<unit_newton>::value ,"this is a derived unit");

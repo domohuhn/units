@@ -15,7 +15,7 @@
 namespace dh {
 namespace units {
 
-template<typename dimension, typename ratio, intmax_t power>
+template<typename dimension, typename ratio, intmax_t power =1>
 class unit {
 public:
     using dimension_type = dimension;

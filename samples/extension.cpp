@@ -40,11 +40,32 @@ public:
     ~pixel2() = default;
 };
 
+// define a derived unit
+struct derived_pixel_per_squaremeter {
+    static std::string name() {
+        return "pxm" ;
+    }
+    // for derived units the first unit in the unit list has to have power 1!
+    using unit_list = dh::mpl::list< unit_pixel, si::unit_per_square_meter >;
+};
+
+// for derived units the power has to be one!
+using unit_pixel_per_squaremeter = dh::units::unit<derived_pixel_per_squaremeter, std::ratio<1,1>, 1>;
+// define an alias for the new unit
+using pixel_per_squaremeter = dh::units::quantity<double,unit_pixel_per_squaremeter>;
+/* or do
+DH_DECLARE_DERIVED_DIMENSION_AND_ONE_UNIT(pixel_per_squaremeter, "pxm" , unit_pixel, si::unit_per_square_meter )
+or
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES(pixel_per_squaremeter, "pxm" , unit_pixel, si::unit_per_square_meter )
+*/
+
 int main() {
     pixel px(32);
     pixel2<int> px2(10);
     auto sum = px +px2;
+    pixel_per_squaremeter pxm = sum/si::square_centimeter<>(2.0);
     std::cout<<sum<<"\n";
     std::cout<<px*px2<<"\n";
-    return sum.count();
+    std::cout<<pxm<<"\n";
+    return 0;
 }

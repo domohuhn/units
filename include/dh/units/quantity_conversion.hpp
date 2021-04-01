@@ -206,6 +206,44 @@ using can_be_added_t = typename std::enable_if<
             lists_contain_same_dimensions<typename LHS::unit_list, typename RHS::unit_list>::value 
         >::type;
 
+template <typename unit>
+using contained_unit_list_t = typename is_derived_unit<unit>::unit_list;
+
+template<typename l1,typename l2>
+struct multiplication_result_assert_same_prefixes;
+
+template<typename... pack1,typename... pack2>
+struct multiplication_result_assert_same_prefixes <mpl::list<pack1...>,mpl::list<pack2...>> {
+    using check = mpl::invoke_t< 
+        mpl::list< mpl::invoke_t<mpl::list<pack2...>,
+            mpl::find_if<mpl::bind< mpl::wrap<units_have_same_dimension_and_different_prefixes>,pack1>> >... 
+        >,
+        mpl::join>;
+    static_assert( check::empty , "A list of units for a quantity cannot have the same unit with different prefixes! Check derived units!");
+    using type = typename multiplication_result<mpl::list<pack1...>,mpl::list<pack2...>>::unit_list;
+};
+
+
+struct unit_extraction_accumulator {
+    template< typename accumulated, typename current>
+    using type = typename multiplication_result_assert_same_prefixes<accumulated,current>::type;
+};
+
+template<bool b>
+struct extract_base_units_impl {
+    template <typename... pack>
+    using type = mpl::invoke_t<mpl::list< contained_unit_list_t<pack>...  >,mpl::accumulate<unit_extraction_accumulator>>;
+};
+
+template<>
+struct extract_base_units_impl<false> {
+    template <typename... pack>
+    using type = mpl::list<>;
+};
+
+template <typename... pack>
+using extract_base_units_t = typename extract_base_units_impl<mpl::is_greater(sizeof...(pack),0)>::template type<pack...>;
+
 }
 }
 

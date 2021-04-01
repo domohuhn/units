@@ -12,8 +12,10 @@
 
 #include <cstdint>
 #include <type_traits>
+#include <ratio>
 #include "dh/mpl/core.hpp"
 #include "dh/units/dimensions.hpp"
+#include "dh/units/unit.hpp"
 
 namespace dh {
 namespace units {
@@ -102,6 +104,41 @@ template <typename T>
 struct is_dh_quantity<T, dh::mpl::void_t<typename T::value_type,
     typename T::quantity_type, typename T::unit_list, decltype(std::declval<T>().count()) >>
     : std::true_type {};
+
+template <typename T, typename = void>
+struct is_dh_unit : std::false_type {};
+template <typename T>
+struct is_dh_unit<T, dh::mpl::void_t<typename T::dimension_type,
+    typename T::prefix_type, decltype(std::declval<size_t>() == T::power_value) >>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct is_derived_unit : std::false_type {
+    using unit_list = mpl::list<T>;
+};
+
+template<typename Ratio>
+struct multiply_first_prefix_in_list {
+    template<typename first, typename... rest>
+    using type = mpl::list< unit<typename first::dimension_type, std::ratio_multiply<Ratio, typename first::prefix_type>  ,first::power_value>, rest...>;
+};
+
+template <typename T>
+struct is_derived_unit<T, dh::mpl::void_t<typename T::dimension_type::unit_list> >
+{
+    constexpr static bool value = is_dh_unit<T>::value && !T::dimension_type::unit_list::empty;
+    static_assert( T::power_value == 1 ,"Derived units cannot have a power different than 1!");
+    static_assert( mpl::invoke_t<typename T::dimension_type::unit_list,mpl::front>::power_value == 1 ,"The power of the first unit in a derived list has to be 1!");
+    using unit_list = mpl::invoke_t<typename T::dimension_type::unit_list, multiply_first_prefix_in_list<typename T::prefix_type> >;
+};
+
+template<typename U1, typename U2>
+struct units_have_same_dimension_and_different_prefixes {
+    using type1 =  typename std::is_same<typename U1::dimension_type, typename U2::dimension_type>::type;
+    using type2 =  typename std::is_same<typename U1::prefix_type, typename U2::prefix_type>::type;
+    constexpr static bool value = type1::value && !type2::value;
+};
+
 
 
 }

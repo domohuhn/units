@@ -253,8 +253,10 @@ TEST(Units, DerivedUnits) {
 
     newton<double> N = kg*m/(s*s);
     kilonewton<double> kN = N;
+    kilonewton<double> kN2 = kg*m/(s*s);
     ASSERT_EQ( N.count() , 2.0 );
     ASSERT_EQ( kN.count() , 0.002 );
+    ASSERT_EQ( kN2.count() , 0.002 );
 }
 
 TEST(Units, Degree) {
@@ -305,6 +307,19 @@ TEST(Units, Clamp) {
     ASSERT_EQ( b.count() , 3.25 );
 }
 
+TEST(Units, Exp) {
+    meter<double> m1(0.0);
+    meter<double> m2(1.0);
+    auto result = exp(m1/m2);
+    ASSERT_EQ(result,1.0);
+}
+
+TEST(Units, Log) {
+    meter<double> m1(5.0);
+    meter<double> m2(5.0);
+    auto result = log(m1/m2);
+    ASSERT_EQ(result,0.0);
+}
 
 TEST(Units, Comparisions) {
     meter<double> m(1000);
@@ -405,10 +420,13 @@ TEST(Units, Print) {
     std::cout<<"year "<< year<>(42.0) <<"\n";
     std::cout<<"celsius "<< imperial::fahrenheit<>(42.0) <<"\n";
     std::cout<<"fahrenheit "<< celsius<>(42.0) <<"\n";
+    std::cout<<"as "<< arcsecond<>(42.0) <<"\n";
+    std::cout<<"am "<< arcminute<>(42.0) <<"\n";
     std::cout<<"deg "<< degree<>(42.0) <<"\n";
     std::cout<<"rad "<< radian<>(42.0) <<"\n";
     std::cout<<"mps "<< meter_per_second<>(42.0) <<"\n";
     std::cout<<"kph "<< kilometer_per_hour<>(42.0) <<"\n";
     std::cout<<"colomb "<< coulomb<>(43) <<"\n";
     std::cout<<"hz "<< hertz<>(44) <<"\n";
+    std::cout<<"nautical "<<imperial::nautical_mile<>{} <<"\n";
 }

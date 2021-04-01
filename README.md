@@ -32,6 +32,7 @@ The following features are supported:
 * Math functions: 
     * min, max, abs, clamp
     * sin, cos, tan for angles
+    * exp, log for dimensionless quantities
 * Printing of the types and units
 * Seamless integration with std::chrono
 * Fully functional in C++11
@@ -54,27 +55,27 @@ Note: If you can use C++20, you should have a look at https://github.com/mpusz/u
 
 ### SI Derived units
 
-| Dimension              | Unit                                   | 
-| :---                   | :----                                  |
-| Angle                  | radian                                 |
-| Angle                  | degree                                 |
-| Angle                  | arcmin                                 |
-| Angle                  | arcsec                                 |
-| Speed                  | meter_per_second, kilometer_per_hour   |
-| Force                  | newton                                 |
-| Energy                 | joule, kilowatthour                    |
-| Power                  | watt                                   |
-| Volume                 | liter,milliter                         |
-| Frequency              | hertz                                  |
-| Pressure               | pascal                                 |
-| Pressure               | millibar                               |
-| Pressure               | bar                                    |
-| Resistance             | ohm                                    |
-| Charge                 | coulomb                                |
-| Capacitance            | farad                                  |
-| magenteic flux         | weber                                  |
-| magnetic flux density  | tesla                                  |
-| Inductivity            | henry                                  |
+| Dimension              | Unit                                   | Defined prefixes  | 
+| :---                   | :----                                  | :---------------: |
+| Angle                  | radian                                 |                   |
+| Angle                  | degree                                 |                   |
+| Angle                  | arcmin                                 |                   |
+| Angle                  | arcsec                                 |                   |
+| Speed                  | meter_per_second, kilometer_per_hour   |                   |
+| Force                  | newton                                 | nano - giga       |
+| Energy                 | joule, kilowatthour                    | nano - giga       |
+| Power                  | watt                                   | nano - giga       |
+| Volume                 | liter,milliter                         |                   |
+| Frequency              | hertz                                  |                   |
+| Pressure               | pascal                                 | nano - giga       |
+| Pressure               | millibar                               |                   |
+| Pressure               | bar                                    |                   |
+| Resistance             | ohm                                    | nano - giga       |
+| Charge                 | coulomb                                | nano - giga       |
+| Capacitance            | farad                                  |                   |
+| magenteic flux         | weber                                  |                   |
+| magnetic flux density  | tesla                                  |                   |
+| Inductivity            | henry                                  |                   |
 
 
 ### Imperial units
@@ -144,6 +145,29 @@ public:
 // DH_DECLARE_UNITS_ALL_PREFIXES( square_ , pixel, unit_pixel, 2 )
 // creates the types square_attopixel to square_exapixel
 
+```
+
+Sometimes, it is useful to create a derived unit, especially for printing the quantities in a human readable way. This can be done in the following ways:
+
+```c++
+// define a derived unit
+struct derived_pixel_per_squaremeter {
+    static std::string name() {
+        return "pxm" ;
+    }
+    // for derived units the first unit in the unit list has to have power 1!
+    using unit_list = dh::mpl::list< unit_pixel, si::unit_per_square_meter >;
+};
+
+// for derived units the power has to be one!
+using unit_pixel_per_squaremeter = dh::units::unit<derived_pixel_per_squaremeter, std::ratio<1,1>, 1>;
+// define an alias for the new unit
+using pixel_per_squaremeter = dh::units::quantity<double,unit_pixel_per_squaremeter>;
+/* or do
+DH_DECLARE_DERIVED_DIMENSION_AND_ONE_UNIT(pixel_per_squaremeter, "pxm" , unit_pixel, si::unit_per_square_meter )
+or
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES(pixel_per_squaremeter, "pxm" , unit_pixel, si::unit_per_square_meter )
+*/
 ```
 
 # Template metaprogramming
@@ -230,14 +254,11 @@ Unit tests are done with googletest. Sources for the tests are in the directory 
 
 There are basic benchmarks in the benchmark directory. Running the benchmarks on my machine with gcc 7 gives:
 
-| Benchmark                | Time        | 
-| :---                     | :----       |
-| units_addition           | 6.49 ns     |
-| units_multiplication     | 6.48 ns     |
-| units_division           |  17.7 ns    |
-| baseline_addition        | 6.44 ns     |
-| baseline_multiplication  | 6.48 ns     |
-| baseline_division        | 17.6 ns     |
+| Benchmark       | Baseline     | Strong units |
+| :---            | :----        | :----        |
+| addition        | 6.44 ns      | 6.49 ns      |
+| multiplication  | 6.48 ns      | 6.48 ns      |
+| division        | 17.6 ns      |  17.7 ns     |
 
 As you can see, there is no difference between using raw doubles as baseline or the units library.
 

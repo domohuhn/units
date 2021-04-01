@@ -211,11 +211,11 @@ enum class PRINT_OPTION {
 
 template<typename A,typename... T>
 std::string unit_to_string(PRINT_OPTION opt,A first, T... args) {
-    return unit_to_string(opt,first)+unit_to_string(opt,args...);
+    return unit_to_string(opt,first)+" "+unit_to_string(opt,args...);
 }
 
 template<typename A>
-std::string unit_to_string(PRINT_OPTION opt,A /*first*/) {
+std::string unit_to_string(PRINT_OPTION opt,A first) {
     constexpr bool is_time = std::is_same<typename A::dimension_type,dimensions::time>::value;
     const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
     const bool print = A::power_value!=0 && ( (A::power_value>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
@@ -230,6 +230,46 @@ std::string unit_to_string(PRINT_OPTION opt,A /*first*/) {
         }
     }
   
+    return "";
+}
+
+template<intmax_t i>
+std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_radian, i> first) {
+    const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
+    const bool print = i!=0 && ( (i>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
+                (i<0 && opt == PRINT_OPTION::ONLY_NEGATIVE_POWER_INV) ||
+                 (opt == PRINT_OPTION::ALL_WITH_POWER) )  ;
+
+    if(print) {
+        return "rad"+dh::units::print_power(i, invert_power_sign);
+    }
+  
+    return "";
+}
+
+template<intmax_t i>
+std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_arcmin, i> first) {
+    const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
+    const bool print = i!=0 && ( (i>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
+                (i<0 && opt == PRINT_OPTION::ONLY_NEGATIVE_POWER_INV) ||
+                 (opt == PRINT_OPTION::ALL_WITH_POWER) )  ;
+
+    if(print) {
+        return "\'"+dh::units::print_power(i, invert_power_sign);
+    }
+    return "";
+}
+
+template<intmax_t i>
+std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_arcsec, i> first) {
+    const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
+    const bool print = i!=0 && ( (i>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
+                (i<0 && opt == PRINT_OPTION::ONLY_NEGATIVE_POWER_INV) ||
+                 (opt == PRINT_OPTION::ALL_WITH_POWER) )  ;
+
+    if(print) {
+        return "\'\'"+dh::units::print_power(i, invert_power_sign);
+    }
     return "";
 }
 
@@ -260,14 +300,14 @@ std::string unit_list_to_string(mpl::list<T...>) {
 template <typename T > 
 typename std::enable_if< is_dh_quantity<T>::value &&  !is_time_quantity<T>::value, std::string>::type to_string(const T& a) {
     using std::to_string;
-    return to_string(a.count()) +" "+ unit_list_to_string(typename T::unit_list{}); 
+    return to_string(a.count()) +" "+ unit_list_to_string(typename T::original_unit_list{}); 
 }
 
 
 template <typename T,typename = typename std::enable_if< is_dh_quantity<T>::value &&  !is_time_quantity<T>::value>::type >
 typename std::enable_if< is_dh_quantity<T>::value &&  !is_time_quantity<T>::value, std::ostream&>::type operator<<(std::ostream& os, const T& a)
 {
-    os << a.count() << ' ' << unit_list_to_string(typename T::unit_list{});
+    os << a.count() << ' ' << unit_list_to_string(typename T::original_unit_list{});
     return os;
 }
 

@@ -11,7 +11,7 @@
 #define DH_UNITS_INCLUDED
 
 // primary include file
-// includes everything grom the library
+// includes everything from the library
 #include "dh/units/si_units.hpp"
 #include "dh/units/imperial_units.hpp"
 #include "dh/units/math.hpp"

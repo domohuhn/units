@@ -69,6 +69,35 @@ DH_DECLARE_QUANTITY( PREFIX ## tera  ## NAME , unit_ ## PREFIX ## tera   ## NAME
 DH_DECLARE_QUANTITY( PREFIX ## peta  ## NAME , unit_ ## PREFIX ## peta   ## NAME ) \
 DH_DECLARE_QUANTITY( PREFIX ## exa   ## NAME , unit_ ## PREFIX ## exa    ## NAME )
 
+#define DH_DECLARE_DERIVED_DIMENSION( NAME , TEXT , ... ) \
+struct derived_ ## NAME { \
+    static std::string name() { \
+        return TEXT ; \
+    } \
+    using unit_list = dh::mpl::list< __VA_ARGS__ >; \
+};
+
+#define DH_DECLARE_DERIVED_DIMENSION_AND_ONE_UNIT( NAME , TEXT , ... ) \
+DH_DECLARE_DERIVED_DIMENSION( NAME , TEXT , __VA_ARGS__ ) \
+using unit_ ## NAME = dh::units::unit< derived_ ## NAME , std::ratio<1,1>, 1 >;
+
+#define DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( NAME , TEXT , ... ) \
+DH_DECLARE_DERIVED_DIMENSION( NAME , TEXT , __VA_ARGS__ ) \
+using unit_nano  ## NAME = dh::units::unit< derived_ ## NAME , std::nano, 1 >; \
+using unit_micro ## NAME = dh::units::unit< derived_ ## NAME , std::micro, 1 >; \
+using unit_milli ## NAME = dh::units::unit< derived_ ## NAME , std::milli, 1 >; \
+using unit_      ## NAME = dh::units::unit< derived_ ## NAME , std::ratio<1,1>, 1 >; \
+using unit_kilo  ## NAME = dh::units::unit< derived_ ## NAME , std::kilo, 1 >; \
+using unit_mega  ## NAME = dh::units::unit< derived_ ## NAME , std::mega, 1 >; \
+using unit_giga  ## NAME = dh::units::unit< derived_ ## NAME , std::giga, 1 >; \
+DH_DECLARE_QUANTITY( nano  ## NAME , unit_ ## nano   ## NAME ) \
+DH_DECLARE_QUANTITY( micro ## NAME , unit_ ## micro  ## NAME ) \
+DH_DECLARE_QUANTITY( milli ## NAME , unit_ ## milli  ## NAME ) \
+DH_DECLARE_QUANTITY(          NAME , unit_           ## NAME ) \
+DH_DECLARE_QUANTITY( kilo  ## NAME , unit_ ## kilo   ## NAME ) \
+DH_DECLARE_QUANTITY( mega  ## NAME , unit_ ## mega   ## NAME ) \
+DH_DECLARE_QUANTITY( giga  ## NAME , unit_ ## giga   ## NAME ) 
+
 
 #endif /* DH_UNITS_DECLARATION_MACROS_INCLUDED */
 

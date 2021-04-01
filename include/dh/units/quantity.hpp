@@ -27,36 +27,38 @@ public:
 
     using quantity_type = quantity;
     
-    using unit_list = mpl::list<UNITS...>;
+    using original_unit_list = mpl::list<UNITS...>;
+    
+    using unit_list = extract_base_units_t<UNITS...>;
 
     template<typename,typename...> friend class quantity;
 
-    template<typename REP2, typename... UNITS2, 
-        typename = typename std::enable_if< lists_contain_same_dimensions<mpl::list<UNITS...>, mpl::list<UNITS2...>>::value >::type >
-    quantity(const quantity<REP2, UNITS2...>& in) : 
-    value_{in.count() * unit_list_conversion_factor<REP,mpl::list<UNITS...>, mpl::list<UNITS2...>>::value} 
+    template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+    quantity(const other& in) : 
+    value_{in.count() * unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value} 
     {
     }
 
-    template<typename REP2, typename... UNITS2, 
-        typename = typename std::enable_if< lists_contain_same_dimensions<mpl::list<UNITS...>, mpl::list<UNITS2...>>::value >::type >
-    quantity(quantity<REP2, UNITS2...>&& in) : 
-    value_{std::move(in.value_) * unit_list_conversion_factor<REP,mpl::list<UNITS...>, mpl::list<UNITS2...>>::value} 
+    template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+    quantity(other&& in) : 
+    value_{std::move(in.value_) * unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value} 
     {
     }
 
-    template<typename REP2, typename... UNITS2, 
-        typename = typename std::enable_if< lists_contain_same_dimensions<mpl::list<UNITS...>, mpl::list<UNITS2...>>::value >::type >
-    quantity& operator=(const quantity<REP2, UNITS2...>& in) {
-        value_ = in.count() * unit_list_conversion_factor<REP,mpl::list<UNITS...>, mpl::list<UNITS2...>>::value;
+    template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+    quantity& operator=(const other& in) {
+        value_ = in.count() * unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value;
         return *this;
     }
 
-    template<typename REP2, typename... UNITS2, 
-        typename = typename std::enable_if< lists_contain_same_dimensions<mpl::list<UNITS...>, mpl::list<UNITS2...>>::value >::type >
-    quantity& operator=(quantity<REP2, UNITS2...>&& in) {
+    template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+    quantity& operator=(other&& in) {
         value_ = std::move(in.value_);
-        value_ *= unit_list_conversion_factor<REP,mpl::list<UNITS...>, mpl::list<UNITS2...>>::value;
+        value_ *= unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value;
         return *this;
     }
 
@@ -74,17 +76,17 @@ public:
         return *this;
     }
 
-    template<typename REP2, typename... UNITS2, 
-        typename = typename std::enable_if< lists_contain_same_dimensions<mpl::list<UNITS...>, mpl::list<UNITS2...>>::value >::type>
-    quantity& operator+=(const quantity<REP2, UNITS2...>& in) {
-        value_ += in.count()* unit_list_conversion_factor<REP,mpl::list<UNITS...>, mpl::list<UNITS2...>>::value;
+    template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+    quantity& operator+=(const other& in) {
+        value_ += in.count()* unit_list_conversion_factor<REP,unit_list, typename other::unit_list >::value;
         return *this;
     }
 
-    template<typename REP2, typename... UNITS2, 
-        typename = typename std::enable_if< lists_contain_same_dimensions<mpl::list<UNITS...>, mpl::list<UNITS2...>>::value >::type>
-    quantity& operator-=(const quantity<REP2, UNITS2...>& in) {
-        value_ -= in.count()* unit_list_conversion_factor<REP,mpl::list<UNITS...>, mpl::list<UNITS2...>>::value;
+    template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+    quantity& operator-=(const other& in) {
+        value_ -= in.count()* unit_list_conversion_factor<REP,unit_list, typename other::unit_list >::value;
         return *this;
     }
 
@@ -185,53 +187,56 @@ T operator+(const T &a) {
 
 // multiply two quantities
 
-template<typename rep1, typename rep2, typename list1, typename list2>
-using multiplication_result_t = typename multiplication_result<list1,list2>::template type<dh::units::quantity,typename std::common_type<rep1,rep2>::type>;
+template<typename LHS, typename RHS>
+using multiplication_result_t = typename multiplication_result<typename LHS::unit_list,typename RHS::unit_list>::
+    template type<dh::units::quantity,typename std::common_type<typename LHS::value_type,typename RHS::value_type>::type>;
 
-template<typename rep1, typename rep2, typename list1, typename list2>
-using division_result_t = typename division_result<list1,list2>::template type<dh::units::quantity,typename std::common_type<rep1,rep2>::type>;
+template<typename LHS, typename RHS>
+using division_result_t = typename division_result<typename LHS::unit_list,typename RHS::unit_list>::
+    template type<dh::units::quantity,typename std::common_type<typename LHS::value_type,typename RHS::value_type>::type>;
 
 
-template<typename REP1,typename REP2, typename... UNITS1, typename... UNITS2>
-auto operator* (const quantity<REP1,UNITS1...>& a, const quantity<REP2,UNITS2...>& b ) 
--> multiplication_result_t<REP1,REP2,mpl::list<UNITS1...>,mpl::list<UNITS2...> > {
-    using rv_t = multiplication_result_t<REP1,REP2,mpl::list<UNITS1...>,mpl::list<UNITS2...> >;
-    const auto factor = compute_multiply_conversion_factor<typename rv_t::value_type>(mpl::list<UNITS1...>{},mpl::list<UNITS2...>{});
+template<typename LHS, typename RHS, typename = typename std::enable_if<is_dh_quantity<LHS>::value && is_dh_quantity<RHS>::value>::type >
+auto operator* (const LHS& a, const RHS& b ) 
+-> multiplication_result_t<LHS,RHS> {
+    using rv_t = multiplication_result_t<LHS,RHS>;
+    const auto factor = compute_multiply_conversion_factor<typename rv_t::value_type>(typename LHS::unit_list{},typename RHS::unit_list{});
     return rv_t{factor*a.count()*b.count()};
 }
 
-template<typename REP1,typename REP2, typename... UNITS1, typename... UNITS2>
-auto operator/ (const quantity<REP1,UNITS1...>& a, const quantity<REP2,UNITS2...>& b ) 
--> division_result_t<REP1,REP2,mpl::list<UNITS1...>,mpl::list<UNITS2...> > {
-    using rv_t = division_result_t<REP1,REP2,mpl::list<UNITS1...>,mpl::list<UNITS2...> >;
-    const auto factor = compute_division_conversion_factor<typename rv_t::value_type>(mpl::list<UNITS1...>{},mpl::list<UNITS2...>{});
+template<typename LHS, typename RHS, typename = typename std::enable_if<is_dh_quantity<LHS>::value && is_dh_quantity<RHS>::value>::type >
+auto operator/ (const LHS& a, const RHS& b ) 
+-> division_result_t<LHS,RHS> {
+    using rv_t = division_result_t<LHS,RHS>;
+    const auto factor = compute_division_conversion_factor<typename rv_t::value_type>(typename LHS::unit_list{},typename RHS::unit_list{});
     return rv_t{factor*a.count()/b.count()};
 }
 
 // integration with std::chrono
 // mult
-template<typename REP1,typename RATIO,typename REP2, typename... UNITS>
-auto operator* (const std::chrono::duration<REP1,RATIO>& a, const quantity<REP2,UNITS...>& b ) 
--> multiplication_result_t<REP1,REP2,mpl::list<unit<dimensions::time,RATIO,1>>,mpl::list<UNITS...> > {
+
+template<typename REP1,typename RATIO,typename Quantity, typename = typename std::enable_if<is_dh_quantity<Quantity>::value >::type >
+auto operator* (const std::chrono::duration<REP1,RATIO>& a, const Quantity& b ) 
+-> multiplication_result_t<quantity<REP1,unit<dimensions::time,RATIO,1>>,Quantity > {
     return quantity<REP1,unit<dimensions::time,RATIO,1>>(a.count())*b;
 }
 
-template<typename REP1,typename RATIO,typename REP2, typename... UNITS>
-auto operator* (const quantity<REP2,UNITS...>& b, const std::chrono::duration<REP1,RATIO>& a ) 
--> multiplication_result_t<REP1,REP2,mpl::list<unit<dimensions::time,RATIO,1>>,mpl::list<UNITS...> > {
+template<typename REP1,typename RATIO,typename Quantity, typename = typename std::enable_if<is_dh_quantity<Quantity>::value >::type >
+auto operator* (const Quantity& b, const std::chrono::duration<REP1,RATIO>& a ) 
+-> multiplication_result_t<quantity<REP1,unit<dimensions::time,RATIO,1>>,Quantity > {
     return quantity<REP1,unit<dimensions::time,RATIO,1>>(a.count())*b;
 }
 
 // division 
-template<typename REP1,typename RATIO,typename REP2, typename... UNITS>
-auto operator/ (const std::chrono::duration<REP1,RATIO>& a, const quantity<REP2,UNITS...>& b ) 
--> division_result_t<REP1,REP2,mpl::list<unit<dimensions::time,RATIO,1>>,mpl::list<UNITS...> > {
+template<typename REP1,typename RATIO,typename Quantity, typename = typename std::enable_if<is_dh_quantity<Quantity>::value >::type >
+auto operator/ (const std::chrono::duration<REP1,RATIO>& a, const Quantity& b ) 
+-> division_result_t<quantity<REP1,unit<dimensions::time,RATIO,1>>,Quantity > {
     return quantity<REP1,unit<dimensions::time,RATIO,1>>(a.count())/b;
 }
 
-template<typename REP1,typename RATIO,typename REP2, typename... UNITS>
-auto operator/ (const quantity<REP2,UNITS...>& b, const std::chrono::duration<REP1,RATIO>& a ) 
--> division_result_t<REP1,REP2,mpl::list<UNITS...>,mpl::list<unit<dimensions::time,RATIO,1>> > {
+template<typename REP1,typename RATIO,typename Quantity, typename = typename std::enable_if<is_dh_quantity<Quantity>::value >::type >
+auto operator/ (const Quantity& b, const std::chrono::duration<REP1,RATIO>& a ) 
+-> division_result_t<Quantity,quantity<REP1,unit<dimensions::time,RATIO,1>> > {
     return b/quantity<REP1,unit<dimensions::time,RATIO,1>>(a.count());
 }
 

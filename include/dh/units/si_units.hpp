@@ -100,31 +100,18 @@ DH_DECLARE_QUANTITY( celsius, unit_celsius )
 // derived quantities
 DH_DECLARE_QUANTITY( acceleration, unit_meter, unit_per_square_second )
 
-DH_DECLARE_QUANTITY( millinewton, unit_gram, unit_meter, unit_per_square_second )
-DH_DECLARE_QUANTITY( newton, unit_kilogram, unit_meter, unit_per_square_second )
-DH_DECLARE_QUANTITY( kilonewton, unit_kilogram, unit_kilometer, unit_per_square_second )
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( newton , "N", unit_kilogram, unit_meter, unit_per_square_second)
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( joule , "J", unit_kilogram, unit_square_meter, unit_per_square_second)
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( watt , "W", unit_kilogram, unit_square_meter, unit_per_cubic_second)
 
-DH_DECLARE_QUANTITY( millijoule, unit_gram, unit_square_meter, unit_per_square_second )
-DH_DECLARE_QUANTITY( joule, unit_kilogram, unit_square_meter, unit_per_square_second )
-DH_DECLARE_QUANTITY( kilojoule, unit_megagram, unit_square_meter, unit_per_square_second )
-DH_DECLARE_QUANTITY( megajoule, unit_gigagram, unit_square_meter, unit_per_square_second )
+using unit_mass_wh = dh::units::unit<dh::units::dimensions::mass, std::ratio<3600000,1>, 1 >;
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( watthour , "Wh", unit_mass_wh, unit_square_meter, unit_per_square_second)
 
-DH_DECLARE_QUANTITY( milliwatt, unit_gram, unit_square_meter, unit_per_cubic_second )
-DH_DECLARE_QUANTITY( watt, unit_kilogram, unit_square_meter, unit_per_cubic_second )
-DH_DECLARE_QUANTITY( kilowatt, unit_megagram, unit_square_meter, unit_per_cubic_second )
-DH_DECLARE_QUANTITY( megawatt, unit_gigagram, unit_square_meter, unit_per_cubic_second )
-DH_DECLARE_QUANTITY( gigawatt, unit_teragram, unit_square_meter, unit_per_cubic_second )
-DH_DECLARE_QUANTITY( terawatt, unit_petagram, unit_square_meter, unit_per_cubic_second )
-
-using unit_mass_kwh = dh::units::unit<dh::units::dimensions::mass, std::ratio<3600000000,1>, 1 >;
-DH_DECLARE_QUANTITY( kilowatthour, unit_mass_kwh, unit_square_meter, unit_per_square_second )
 
 using unit_per_ampere = dh::units::unit<dh::units::dimensions::electric_current, std::ratio<1,1>, -1 >;
 using unit_per_square_ampere = dh::units::unit<dh::units::dimensions::electric_current, std::ratio<1,1>, -2 >;
 using unit_square_ampere = dh::units::unit<dh::units::dimensions::electric_current, std::ratio<1,1>, 2 >;
-DH_DECLARE_QUANTITY( millivolt, unit_gram, unit_square_meter, unit_per_cubic_second , unit_per_ampere)
-DH_DECLARE_QUANTITY( volt, unit_kilogram, unit_square_meter, unit_per_cubic_second , unit_per_ampere)
-DH_DECLARE_QUANTITY( kilovolt, unit_megagram, unit_square_meter, unit_per_cubic_second , unit_per_ampere)
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( volt , "V", unit_kilogram, unit_square_meter, unit_per_cubic_second , unit_per_ampere)
 
 using unit_per_meter = dh::units::unit<dh::units::dimensions::length, std::ratio<1,1>, -1 >;
 using unit_per_square_meter = dh::units::unit<dh::units::dimensions::length, std::ratio<1,1>, -2 >;
@@ -133,14 +120,15 @@ using unit_per_kilogram = dh::units::unit<dh::units::dimensions::mass, std::rati
 using unit_up4_second = dh::units::unit<dh::units::dimensions::time, std::ratio<1,1>, 4 >;
 
 DH_DECLARE_QUANTITY( hertz, unit_per_second )
-DH_DECLARE_QUANTITY( pascal, unit_kilogram, unit_per_meter, unit_per_square_second )
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( pascal , "pa", unit_kilogram, unit_per_meter, unit_per_square_second )
 DH_DECLARE_QUANTITY( millibar, unit_kilogram, unit_per_centimeter, unit_per_square_second )
 DH_DECLARE_QUANTITY( bar, unit_megagram, unit_per_centimeter, unit_per_square_second )
 
-DH_DECLARE_QUANTITY( ohm, unit_kilogram, unit_square_meter, unit_per_cubic_second , unit_per_square_ampere)
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( ohm , "ohm", unit_kilogram, unit_square_meter, unit_per_cubic_second , unit_per_square_ampere )
 
-DH_DECLARE_QUANTITY( coulomb, unit_ampere, unit_second)
 DH_DECLARE_QUANTITY( farad, unit_square_ampere, unit_up4_second, unit_per_kilogram, unit_per_square_meter)
+
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( coulomb , "C",  unit_ampere, unit_second )
 DH_DECLARE_QUANTITY( weber, unit_kilogram, unit_square_meter, unit_per_square_second , unit_per_ampere)
 DH_DECLARE_QUANTITY( tesla, unit_kilogram,  unit_per_square_second , unit_per_ampere)
 DH_DECLARE_QUANTITY( henry, unit_kilogram, unit_square_meter, unit_per_square_second , unit_per_square_ampere)

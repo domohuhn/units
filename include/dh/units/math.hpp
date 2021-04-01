@@ -88,6 +88,17 @@ T clamp (const T& value, const T& minv,const T& maxv) {
     return max(minv ,min(maxv,value));
 }
 
+
+template<typename T, typename = typename std::enable_if<is_dh_quantity<T>::value && T::unit_list::empty >::type>
+math_return_t<T> exp (const T& value) {
+    return std::exp(math_return_t<T>(value.count()));
+}
+
+template<typename T, typename = typename std::enable_if<is_dh_quantity<T>::value && T::unit_list::empty >::type>
+math_return_t<T> log (const T& value) {
+    return std::log(math_return_t<T>(value.count()));
+}
+
 }
 }
 
