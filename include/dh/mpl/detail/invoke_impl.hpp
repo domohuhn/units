@@ -20,6 +20,7 @@ namespace detail {
 template<typename list, typename func>
 using invoke_helper_t = typename list::template then<func>;
 
+#ifndef _MSC_VER
 template <bool b>
 struct invoker {
     template<typename list, typename func, typename... rest>
@@ -31,6 +32,25 @@ struct invoker<false> {
     template<typename list, typename func>
     using type = dh::mpl::detail::invoke_helper_t<list,func>;
 };
+
+#else
+
+// visual studio workaround 
+template <typename... >
+struct invoker;
+
+template <typename list, typename func, typename... rest>
+struct invoker<list,func,rest...>{
+     using type = typename invoker<dh::mpl::detail::invoke_helper_t<list,func> , rest...>::type;
+};
+
+
+template <typename list, typename func>
+struct invoker<list,func> {
+    using type = dh::mpl::detail::invoke_helper_t<list,func>;
+};
+
+#endif
 
 }
 }

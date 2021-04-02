@@ -14,8 +14,15 @@
 namespace dh {
 namespace mpl {
 
+#ifndef _MSC_VER
 template<typename list, typename... funcs>
 using invoke_t = typename detail::invoker<is_less(1,sizeof...(funcs))>::template type<list,funcs...>;
+
+#else
+// visual studio workaround
+template<typename... funcs>
+using invoke_t = typename detail::invoker<funcs...>::type;
+#endif
 
 }
 }

@@ -26,6 +26,9 @@ struct list {
     
     static constexpr size_t size = sizeof...(pack);
     static constexpr bool empty = size==0;
+
+    template<class next, typename... firstargs>
+    using type = typename next::template type<firstargs...,pack...>;
 };
 
 template<typename functor,typename... pack>

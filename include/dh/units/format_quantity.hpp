@@ -163,7 +163,7 @@ template <typename T>
 using first_dimension_t = typename first_unit_t<T>::dimension_type;
 
 template <typename T,typename = typename std::enable_if< is_time_quantity<T>::value >::type >
-std::string print_time_unit(const T& in) {
+std::string print_time_unit(const T& /*in*/) {
     using time_ratio = typename first_unit_t<T>::prefix_type;
     return " "+dh::units::format_time_unit::to_string(time_ratio{})+dh::units::print_power(first_unit_t<T>::power_value);
 }
@@ -215,7 +215,7 @@ std::string unit_to_string(PRINT_OPTION opt,A first, T... args) {
 }
 
 template<typename A>
-std::string unit_to_string(PRINT_OPTION opt,A first) {
+std::string unit_to_string(PRINT_OPTION opt,A /*first*/) {
     constexpr bool is_time = std::is_same<typename A::dimension_type,dimensions::time>::value;
     const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
     const bool print = A::power_value!=0 && ( (A::power_value>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
@@ -234,7 +234,7 @@ std::string unit_to_string(PRINT_OPTION opt,A first) {
 }
 
 template<intmax_t i>
-std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_radian, i> first) {
+std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_radian, i> /*first*/) {
     const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
     const bool print = i!=0 && ( (i>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
                 (i<0 && opt == PRINT_OPTION::ONLY_NEGATIVE_POWER_INV) ||
@@ -248,7 +248,7 @@ std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensio
 }
 
 template<intmax_t i>
-std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_arcmin, i> first) {
+std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_arcmin, i> /*first*/) {
     const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
     const bool print = i!=0 && ( (i>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
                 (i<0 && opt == PRINT_OPTION::ONLY_NEGATIVE_POWER_INV) ||
@@ -261,7 +261,7 @@ std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensio
 }
 
 template<intmax_t i>
-std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_arcsec, i> first) {
+std::string unit_to_string(PRINT_OPTION opt, dh::units::unit<dh::units::dimensions::angle, si::ratio_arcsec, i> /*first*/) {
     const bool invert_power_sign = !(opt == PRINT_OPTION::ALL_WITH_POWER);
     const bool print = i!=0 && ( (i>0 && opt == PRINT_OPTION::ONLY_POSTIVE_POWER) ||
                 (i<0 && opt == PRINT_OPTION::ONLY_NEGATIVE_POWER_INV) ||

@@ -14,7 +14,10 @@ option(DH_UNITS_BUILD_BENCHMAKRS "Build the benchmarks for the hashes module" ON
 
 include(FetchContent)
 
-add_library(mpl
+add_library(mpl INTERFACE)
+
+
+add_library(mpl_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/accumulate.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/bind.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/comparisons.hpp
@@ -46,22 +49,20 @@ add_library(mpl
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/pop_front_impl.hpp
 )
 
-target_include_directories(mpl PUBLIC
+target_include_directories(mpl INTERFACE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(mpl
-	PUBLIC cxx_std_11
-)
-set_target_properties(mpl PROPERTIES LINKER_LANGUAGE CXX)
+target_compile_features(mpl INTERFACE cxx_std_11)
 add_library(dh::mpl ALIAS mpl)
-
-target_include_directories(mpl PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
+target_link_libraries(mpl_files PUBLIC dh::mpl)
+set_target_properties(mpl_files PROPERTIES LINKER_LANGUAGE CXX)
 
 
-add_library(units
+add_library(units INTERFACE)
+
+add_library(units_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units.hpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/declaration_macros.hpp
@@ -76,8 +77,9 @@ add_library(units
 	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/unit.hpp
 )
 
-target_link_libraries(units PUBLIC dh::mpl)
-set_target_properties(units PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(units INTERFACE dh::mpl)
+set_target_properties(units_files PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(units_files PUBLIC dh::mpl)
 add_library(dh::units ALIAS units)
 
 #
@@ -117,6 +119,13 @@ if(DH_UNITS_BUILD_TESTS)
 		target_include_directories(test_dh_units PUBLIC
 			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 		)
+		if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+			target_compile_options(test_dh_units PRIVATE -Wall -Wextra -pedantic)
+		elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+			# fix for msvc - otherwises tests wont link
+			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+		endif()
 
 		target_link_libraries(test_dh_units PRIVATE gtest gtest_main dh::units)
 		include(GoogleTest)
@@ -169,3 +178,23 @@ endif()
 # Install
 #
 
+install(TARGETS units mpl
+        DESTINATION lib
+        EXPORT unitsTargets)
+install(DIRECTORY include/ DESTINATION include)
+
+install(EXPORT unitsTargets
+  FILE dh_units-targets.cmake
+  NAMESPACE dh::
+  DESTINATION lib/cmake/dh_units
+)
+
+include(CMakePackageConfigHelpers)
+configure_file(dh_unitsConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/dh_unitsConfig.cmake @ONLY)
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/dh_unitsConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dh_unitsConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/dh_unitsConfigVersion.cmake
+        DESTINATION lib/cmake/dh_units )

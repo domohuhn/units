@@ -11,6 +11,7 @@
 
 #include "dh/mpl/list.hpp"
 #include "dh/mpl/detail/join_impl.hpp"
+#include "dh/mpl/comparisons.hpp"
 
 namespace dh {
 namespace mpl {
@@ -18,8 +19,9 @@ namespace mpl {
 /** @brief Joins the packs given in the lists provided as template arguments to a single list */
 struct join {
     template<typename... pack>
-    using type = typename detail::join<pack...>::type;
+    using type = typename detail::join<is_greater(sizeof...(pack),0)>::template type<pack...>;
 };
+
 
 }
 }

@@ -228,11 +228,14 @@ auto operator* (const Quantity& b, const std::chrono::duration<REP1,RATIO>& a )
 }
 
 // division 
+#ifndef _MSC_VER
+// MSVCs c++ standard lib seems bugged - tries to instantiate std::chrono scalar division instead of this function
 template<typename REP1,typename RATIO,typename Quantity, typename = typename std::enable_if<is_dh_quantity<Quantity>::value >::type >
 auto operator/ (const std::chrono::duration<REP1,RATIO>& a, const Quantity& b ) 
 -> division_result_t<quantity<REP1,unit<dimensions::time,RATIO,1>>,Quantity > {
     return quantity<REP1,unit<dimensions::time,RATIO,1>>(a.count())/b;
 }
+#endif
 
 template<typename REP1,typename RATIO,typename Quantity, typename = typename std::enable_if<is_dh_quantity<Quantity>::value >::type >
 auto operator/ (const Quantity& b, const std::chrono::duration<REP1,RATIO>& a ) 
