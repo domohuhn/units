@@ -27,7 +27,7 @@ template<typename T,typename A,
 typename std::enable_if<is_dh_quantity<A>::value && is_dh_quantity<T>::value &&
     lists_contain_same_dimensions<typename A::unit_list, typename T::unit_list>::value,bool>::type = true >
 T quantity_cast (const A& a) {
-    return T(a.count() * unit_list_conversion_factor<math_return_t<T>,typename T::unit_list, typename A::unit_list>::value);
+    return T(static_cast<typename T::value_type>(a.count() * unit_list_conversion_factor<math_return_t<T>,typename T::unit_list, typename A::unit_list>::value));
 }
 
 template<typename T>

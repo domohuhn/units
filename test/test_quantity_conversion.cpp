@@ -88,4 +88,8 @@ using add_result_units3 = typename combine_unit_lists_selecting_higher_accuracy<
 static_assert(std::is_same<impulse_list2, add_result_units2 >::value, "should be the same");
 static_assert(std::is_same<impulse_list2, add_result_units3 >::value, "should be the same");
 
+static_assert(dh::units::quantity_conversion_is_lossless<si::meter<double>, si::millimeter<double>>::value, "should be lossless");
+static_assert(dh::units::quantity_conversion_is_lossless<si::millimeter<double>,si::meter<double>>::value, "should be lossless");
+static_assert(!dh::units::quantity_conversion_is_lossless<si::meter<int>, si::millimeter<int>>::value, "conversion is lossy");
+static_assert(dh::units::quantity_conversion_is_lossless<si::millimeter<int>,si::meter<int>>::value, "should be lossless");
 

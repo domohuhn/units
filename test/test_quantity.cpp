@@ -405,12 +405,6 @@ TEST(Units, ChronoIntegration) {
     ASSERT_NEAR( ts3.count() , 1900, dbl_precision );
     ASSERT_NEAR( ts4.count() , -1900, dbl_precision );
 
-#ifndef _MSC_VER
-    auto spm = si::millisecond<>(2000.0)/m;
-    meter<> mr = std::chrono::seconds(2)/spm;
-    ASSERT_NEAR( mr.count() , 11.0, dbl_precision );
-#endif
-
 }
 
 TEST(Units, Print) {

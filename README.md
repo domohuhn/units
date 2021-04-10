@@ -245,7 +245,7 @@ make
 make install
 ```
 
-Currently, the library compiles at least with gcc 7.4 and Visual Studio 19 (however, the overload to divide a std::chrono duration by a quantity had to be disabled).
+Currently, the library compiles at least with gcc 7.4 and Visual Studio 19.
 
 ## Using the library
 
