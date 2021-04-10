@@ -12,6 +12,9 @@
 #include "dh/units/si_units.hpp"
 
 namespace imperial {
+    
+template<typename T>
+using scalar = ::dh::units::scalar<T>;
 
 using ratio_mile = std::ratio<1609344,1000>;
 using ratio_yard = std::ratio<9144,10000>;

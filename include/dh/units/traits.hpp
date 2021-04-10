@@ -109,7 +109,7 @@ template <typename T, typename = void>
 struct is_dh_unit : std::false_type {};
 template <typename T>
 struct is_dh_unit<T, dh::mpl::void_t<typename T::dimension_type,
-    typename T::prefix_type, decltype(std::declval<size_t>() == T::power_value) >>
+    typename T::prefix_type, decltype(std::declval<intmax_t>() == T::power_value) >>
     : std::true_type {};
 
 template <typename T, typename = void>
@@ -139,7 +139,14 @@ struct units_have_same_dimension_and_different_prefixes {
     constexpr static bool value = type1::value && !type2::value;
 };
 
-
+template <typename T,typename Unit, typename = void>
+struct quantity_convertible_to_unit : std::false_type {};
+template <typename T,typename Unit>
+struct quantity_convertible_to_unit<T,Unit, dh::mpl::void_t<typename T::value_type,
+    typename T::quantity_type, typename T::unit_list, decltype(std::declval<T>().count())> >
+{
+    constexpr static bool value = lists_contain_same_dimensions< typename T::unit_list, dh::mpl::list<Unit>>::value;
+};
 
 }
 }

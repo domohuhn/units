@@ -324,6 +324,28 @@ bool operator >=(const LHS &a, const RHS &b) {
     return b <= a;
 }
 
+template <typename T = double>
+class scalar : public
+::dh::units::quantity<T>
+{
+public:
+    using base_type = ::dh::units::quantity<T>;
+    using base_type::base_type;
+    using value_type = T;
+    scalar(const base_type& q) : base_type(q) {}
+    scalar(base_type&& q) : base_type(std::move(q)) {}
+    scalar() = default;
+    scalar(const scalar&) = default;
+    scalar(scalar&&) = default;
+    scalar& operator=(const scalar&) = default;
+    scalar& operator=(scalar&&) = default;
+    ~scalar() = default;
+
+    operator T() const {
+        return this->count();
+    }
+};
+
 
 }
 }

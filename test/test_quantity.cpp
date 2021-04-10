@@ -376,11 +376,13 @@ TEST(Units, MultiplicationConversion) {
     ASSERT_EQ( m2.count() , 0.5 );
 }
 
+constexpr double dbl_precision = 3e-16F;
+
 TEST(Units, AdditonConversion) {
     auto ts = si::second<>(2.0) + si::millisecond<>(100) ;
     auto ts2 = si::millisecond<>(100) + si::second<>(2.0) ;
-    ASSERT_NEAR( ts.count() , 2100, 3e-16F );
-    ASSERT_NEAR( ts2.count() , 2100, 3e-16F );
+    ASSERT_NEAR( ts.count() , 2100, dbl_precision );
+    ASSERT_NEAR( ts2.count() , 2100, dbl_precision );
 }
 
 TEST(Units, ChronoIntegration) {
@@ -390,23 +392,23 @@ TEST(Units, ChronoIntegration) {
     meter<> m2 = mps*std::chrono::milliseconds(100);
     meter<> m3 = std::chrono::milliseconds(100)*mps;
 
-    ASSERT_NEAR( m2.count() , 0.55, 3e-16F );
-    ASSERT_NEAR( m3.count() , 0.55, 3e-16F );
+    ASSERT_NEAR( m2.count() , 0.55, dbl_precision );
+    ASSERT_NEAR( m3.count() , 0.55, dbl_precision );
 
     auto ts = si::second<>(2.0) + std::chrono::milliseconds(100) ;
     auto ts2 = std::chrono::milliseconds(100) + si::second<>(2.0) ;
-    ASSERT_NEAR( ts.count() , 2100, 3e-16F );
-    ASSERT_NEAR( ts2.count() , 2100, 3e-16F );
+    ASSERT_NEAR( ts.count() , 2100, dbl_precision );
+    ASSERT_NEAR( ts2.count() , 2100, dbl_precision );
 
     auto ts3 = si::second<>(2.0) - std::chrono::milliseconds(100) ;
     auto ts4 = std::chrono::milliseconds(100) - si::second<>(2.0) ;
-    ASSERT_NEAR( ts3.count() , 1900, 3e-16F );
-    ASSERT_NEAR( ts4.count() , -1900, 3e-16F );
+    ASSERT_NEAR( ts3.count() , 1900, dbl_precision );
+    ASSERT_NEAR( ts4.count() , -1900, dbl_precision );
 
 #ifndef _MSC_VER
     auto spm = si::millisecond<>(2000.0)/m;
     meter<> mr = std::chrono::seconds(2)/spm;
-    ASSERT_NEAR( mr.count() , 11.0, 3e-16F );
+    ASSERT_NEAR( mr.count() , 11.0, dbl_precision );
 #endif
 
 }
@@ -431,4 +433,39 @@ TEST(Units, Print) {
     std::cout<<"colomb "<< coulomb<>(43) <<"\n";
     std::cout<<"hz "<< hertz<>(44) <<"\n";
     std::cout<<"nautical "<<imperial::nautical_mile<>{} <<"\n";
+}
+
+
+TEST(Units, QuantityCast) {
+    si::celsius<double> c(0.0);
+    auto k = quantity_cast<si::kelvin<double>>(c);
+    auto mk = quantity_cast<si::millikelvin<double>>(c);
+    ASSERT_EQ(k.count(),273.15);
+    ASSERT_EQ(mk.count(),273150);
+
+    si::millikelvin<double> t2 (173150 );
+    auto c2 = quantity_cast<si::celsius<double>>(t2);
+    ASSERT_NEAR( c2.count() , -100.0, 100*dbl_precision );
+
+    auto f = quantity_cast<imperial::fahrenheit<double>>(c);
+    ASSERT_NEAR( f.count() , 32.0, 32*dbl_precision );
+    si::celsius<double> c3(-40.0);
+    auto f2 = quantity_cast<imperial::fahrenheit<double>>(c3);
+    ASSERT_NEAR( f2.count() , -40.0, 40*dbl_precision );
+    auto c4 = quantity_cast<si::celsius<double>>(f2);
+    ASSERT_NEAR( c4.count() , -40.0, 40*dbl_precision );
+    auto c5 = quantity_cast<si::celsius<double>>(f);
+    ASSERT_NEAR( c5.count() , 0.0, dbl_precision );
+
+    auto mk2 = quantity_cast<si::millikelvin<double>>(f);
+    ASSERT_EQ(mk2.count(),273150);
+    si::kelvin<double> k2(0);
+    auto f3 = quantity_cast<imperial::fahrenheit<double>>(k2);
+    ASSERT_NEAR( f3.count() , -459.67, 459.67*dbl_precision );
+
+    si::millimeter<int> mm(1100);
+    auto m = quantity_cast<si::meter<int>>(mm);
+    ASSERT_EQ(m.count(),1);
+
+
 }

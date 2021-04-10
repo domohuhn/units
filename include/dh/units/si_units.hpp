@@ -17,6 +17,8 @@
 
 namespace si {
 
+template<typename T>
+using scalar = ::dh::units::scalar<T>;
 
 
 DH_DECLARE_QUANTITY_ALL_PREFIXES( , meter , dh::units::dimensions::length , 1)
@@ -129,9 +131,9 @@ DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( ohm , "ohm", unit_kilogram, unit_squa
 DH_DECLARE_QUANTITY( farad, unit_square_ampere, unit_up4_second, unit_per_kilogram, unit_per_square_meter)
 
 DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( coulomb , "C",  unit_ampere, unit_second )
-DH_DECLARE_QUANTITY( weber, unit_kilogram, unit_square_meter, unit_per_square_second , unit_per_ampere)
-DH_DECLARE_QUANTITY( tesla, unit_kilogram,  unit_per_square_second , unit_per_ampere)
-DH_DECLARE_QUANTITY( henry, unit_kilogram, unit_square_meter, unit_per_square_second , unit_per_square_ampere)
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( weber , "Wb",  unit_kilogram, unit_square_meter, unit_per_square_second , unit_per_ampere )
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( tesla , "T", unit_kilogram,  unit_per_square_second , unit_per_ampere )
+DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES( henry , "H", unit_kilogram, unit_square_meter, unit_per_square_second , unit_per_square_ampere )
 
 
 
