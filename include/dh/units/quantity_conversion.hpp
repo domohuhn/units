@@ -101,6 +101,18 @@ struct combine_unit_lists_selecting_higher_accuracy<mpl::list<pack1...>,mpl::lis
 };
 
 
+template <typename UnitTo,typename UnitFrom, typename = void>
+struct quantity_conversion_is_lossless : std::false_type {};
+
+template <typename UnitTo,typename UnitFrom>
+struct quantity_conversion_is_lossless<UnitTo,UnitFrom, typename std::enable_if< is_dh_quantity<UnitTo>::value && is_dh_quantity<UnitFrom>::value >::type >
+{
+    constexpr static bool value = 
+    unit_list_conversion_factor<typename UnitTo::value_type,typename UnitTo::unit_list, typename UnitFrom::unit_list>::value >= 1 ||
+    std::is_floating_point<typename std::decay<UnitTo>::type::value_type>::value;
+};
+
+
 // ===========================================================================================================================
 
 template<typename operation>

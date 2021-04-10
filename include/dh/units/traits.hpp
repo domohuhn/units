@@ -1,4 +1,3 @@
-
 /** @file
  *
  * @copyright 2021 domohuhn
@@ -147,6 +146,7 @@ struct quantity_convertible_to_unit<T,Unit, dh::mpl::void_t<typename T::value_ty
 {
     constexpr static bool value = lists_contain_same_dimensions< typename T::unit_list, dh::mpl::list<Unit>>::value;
 };
+
 
 }
 }

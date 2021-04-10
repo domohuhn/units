@@ -463,9 +463,14 @@ TEST(Units, QuantityCast) {
     auto f3 = quantity_cast<imperial::fahrenheit<double>>(k2);
     ASSERT_NEAR( f3.count() , -459.67, 459.67*dbl_precision );
 
-    si::millimeter<int> mm(1100);
-    auto m = quantity_cast<si::meter<int>>(mm);
+}
+
+TEST(Units, IntegralConversion) {
+    si::meter<int> m(2);
+    si::millimeter<int> mm = m;
+    ASSERT_EQ(mm.count(),2000);
+
+    mm = si::millimeter<int>(1100);
+    m = quantity_cast<si::meter<int>>(mm);
     ASSERT_EQ(m.count(),1);
-
-
 }

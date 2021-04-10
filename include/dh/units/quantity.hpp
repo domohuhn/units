@@ -34,28 +34,32 @@ public:
     template<typename,typename...> friend class quantity;
 
     template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
-            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value
+            && quantity_conversion_is_lossless<quantity<REP,UNITS...>,other>::value>::type >
     quantity(const other& in) : 
     value_{in.count() * unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value} 
     {
     }
 
     template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
-            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value
+            && quantity_conversion_is_lossless<quantity<REP,UNITS...>,other>::value>::type >
     quantity(other&& in) : 
     value_{std::move(in.value_) * unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value} 
     {
     }
 
     template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
-            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value
+            && quantity_conversion_is_lossless<quantity<REP,UNITS...>,other>::value>::type >
     quantity& operator=(const other& in) {
         value_ = in.count() * unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value;
         return *this;
     }
 
     template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
-            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value
+            && quantity_conversion_is_lossless<quantity<REP,UNITS...>,other>::value>::type >
     quantity& operator=(other&& in) {
         value_ = std::move(in.value_);
         value_ *= unit_list_conversion_factor<REP,unit_list, typename other::unit_list>::value;
@@ -77,14 +81,16 @@ public:
     }
 
     template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
-            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value
+            && quantity_conversion_is_lossless<quantity<REP,UNITS...>,other>::value>::type >
     quantity& operator+=(const other& in) {
         value_ += in.count()* unit_list_conversion_factor<REP,unit_list, typename other::unit_list >::value;
         return *this;
     }
 
     template<typename other, typename = typename std::enable_if< is_dh_quantity<other>::value 
-            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value>::type >
+            && lists_contain_same_dimensions<unit_list, typename other::unit_list>::value
+            && quantity_conversion_is_lossless<quantity<REP,UNITS...>,other>::value>::type >
     quantity& operator-=(const other& in) {
         value_ -= in.count()* unit_list_conversion_factor<REP,unit_list, typename other::unit_list >::value;
         return *this;

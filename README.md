@@ -73,9 +73,9 @@ Note: If you can use C++20, you should have a look at https://github.com/mpusz/u
 | Resistance             | ohm                                    | nano - giga       |
 | Charge                 | coulomb                                | nano - giga       |
 | Capacitance            | farad                                  |                   |
-| magenteic flux         | weber                                  |                   |
-| magnetic flux density  | tesla                                  |                   |
-| Inductivity            | henry                                  |                   |
+| magenteic flux         | weber                                  | nano - giga       |
+| magnetic flux density  | tesla                                  | nano - giga       |
+| Inductivity            | henry                                  | nano - giga       |
 
 
 ### Imperial units
@@ -92,6 +92,23 @@ Note: If you can use C++20, you should have a look at https://github.com/mpusz/u
 | Speed                     | miles_per_hour |      1    |
 | Speed                     | feet_per_second|      1    |
 | Temperature               | fahrenheit     |      1    |
+
+### Conversions between units
+
+Quantities of different units can be converted to each other. Lossless conversions are performed implictly, but you have to specifically ask for a lossy conversions
+by using quantity_cast<>. Here is an example:
+
+```c++
+si::millimeter<int> mm(1200);
+si::meter<int> m = mm; // This conversion would lose precision. You will get a compilation error:
+// no match for 'operator=' (operand types are 'si::meter<int>' and 'si::millimeter<int>')
+
+auto m = si::quantity_cast<si::meter<int>>(mm); // ok, m is 1
+```
+Lossless conversions are either conversions between two quantities with floating point representations or if the conversion factor is larger than 1.
+These are the same requirements for conversions as in std::chrono.
+
+A special case are the different temperatures Celsius, Fahrenheit and Kelvin. These units can only be converted using quantity_cast<>.
 
 ## Extending the library types
 If you want to add your own units to extend the types provided by the library, here is an example how to do it:
