@@ -12,6 +12,7 @@
 #include "dh/mpl/void_t.hpp"
 #include <type_traits>
 #include <cstdint>
+#include <cstddef>
 
 namespace dh {
 namespace mpl {
