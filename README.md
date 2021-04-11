@@ -25,6 +25,8 @@ kilometer<float> km = mile; // ok, km is now 1.609344
 ```
 The library is a header only library, so you can simply include it in your project and you are done!
 
+[Try it on compiler explorer](https://godbolt.org/z/rorvYEao8)
+
 ## Features
 
 The following features are supported:
@@ -40,6 +42,7 @@ The following features are supported:
 * Printing of the types and units
 * Seamless integration with std::chrono
 * Fully functional in C++11
+* [High quality error messages!](https://godbolt.org/z/1hdo1954h)
 
 Note: If you can use C++20, you should have a look at https://github.com/mpusz/units
 
