@@ -20,7 +20,7 @@ namespace detail {
 template<typename list, typename func>
 using invoke_helper_t = typename list::template then<func>;
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__clang__)
 template <bool b>
 struct invoker {
     template<typename list, typename func, typename... rest>

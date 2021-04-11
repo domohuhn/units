@@ -14,7 +14,7 @@
 namespace dh {
 namespace mpl {
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__clang__)
 template<typename list, typename... funcs>
 using invoke_t = typename detail::invoker<is_less(1,sizeof...(funcs))>::template type<list,funcs...>;
 
