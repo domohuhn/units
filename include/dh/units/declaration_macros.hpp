@@ -5,10 +5,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#pragma once
 
 #ifndef DH_UNITS_DECLARATION_MACROS_INCLUDED
 #define DH_UNITS_DECLARATION_MACROS_INCLUDED
-
 
 #define DH_DECLARE_QUANTITY( NAME, ... ) \
 template <typename T = double> \
