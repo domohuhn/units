@@ -86,7 +86,9 @@ add_library(dh::units ALIAS units)
 # Tests
 #
 
-if(DH_UNITS_BUILD_TESTS)
+include(CTest)
+
+if(BUILD_TESTING AND DH_UNITS_BUILD_TESTS)
 
 	FetchContent_Declare(
 	googletest
@@ -99,6 +101,8 @@ if(DH_UNITS_BUILD_TESTS)
 		message(STATUS "Populating googletest...")
 		FetchContent_Populate(googletest)
 	endif()
+	set(BUILD_GMOCK OFF)
+	set(INSTALL_GTEST OFF)
   	add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 
 	if(TARGET gtest AND TARGET gtest_main)
@@ -160,6 +164,7 @@ if(DH_UNITS_BUILD_BENCHMAKRS)
 		message(STATUS "Populating googlebenchmark...")
 		FetchContent_Populate(googlebenchmark)
 	endif()
+	set(BENCHMARK_ENABLE_TESTING OFF)
   	add_subdirectory(${googlebenchmark_SOURCE_DIR} ${googlebenchmark_BINARY_DIR})
 
 	if(TARGET benchmark)
