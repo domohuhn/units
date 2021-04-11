@@ -82,6 +82,15 @@ if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	target_link_libraries(units_files PUBLIC dh::mpl)
 endif()
 
+find_package(fmt)
+if(NOT fmt_FOUND)
+	message(STATUS "Could not find libfmt - disabling unit formatting")
+	target_compile_definitions(units INTERFACE -DDH_UNITS_DISABLE_LIBFMT)
+else()
+	set(DH_NEEDS_FMT_DEPENDENCY ON)
+	target_link_libraries(units INTERFACE fmt::fmt)
+endif()
+
 #
 # Tests
 #
@@ -120,6 +129,10 @@ if(BUILD_TESTING AND DH_UNITS_BUILD_TESTS)
 			test/test_traits.cpp 
 			test/test_transform.cpp 
 		)
+		if(TARGET fmt::fmt)
+			target_sources(test_dh_units PRIVATE test/test_quantity_format.cpp )
+		endif()
+
 		target_include_directories(test_dh_units PUBLIC
 			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 		)

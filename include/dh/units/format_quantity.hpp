@@ -7,17 +7,38 @@
  */
 #pragma once
 
-#ifndef DH_UNITS_RATIO_TO_STRING_INCLUDED
-#define DH_UNITS_RATIO_TO_STRING_INCLUDED
+#ifndef DH_UNITS_FORMAT_QUANTITY_INCLUDED
+#define DH_UNITS_FORMAT_QUANTITY_INCLUDED
 
 #include <string>
 #include <ratio>
 #include "dh/units/si_units.hpp"
 #include "dh/units/imperial_units.hpp"
 #include <iosfwd>
+#include <algorithm> 
+#include <cctype>
+#include <locale>
 
 namespace dh {
 namespace units {
+
+inline std::string trimLeft(std::string s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+    return s;
+}
+
+inline std::string trimRight(std::string s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+    return s;
+}
+
+inline std::string trim(std::string s) {
+    return trimRight(trimLeft(s));
+}
 
 template <typename Ratio>
 inline std::string to_string() {
@@ -186,6 +207,7 @@ std::ostream& operator<<(std::ostream& os, const T& a)
 #define DH_DECLARE_FORMAT_FUNCTIONS( TYPE, UNIT_STRING ) \
 template <typename T > \
 std::string to_string(const TYPE <T>& a) { \
+    using std::to_string; \
     return to_string(a.count())+ UNIT_STRING; \
 } \
 template <typename T > \
@@ -291,9 +313,9 @@ std::string unit_list_to_string(mpl::list<T...>) {
     }
     constexpr size_t positive_powers = mpl::invoke_t<mpl::list<T...>,mpl::count_if<mpl::wrap<unit_power_positive>> >::size;
     if(positive_powers != mpl::list<T...>::size && positive_powers!=0) {
-        return unit_to_string(PRINT_OPTION::ONLY_POSTIVE_POWER, T{}...)+"/"+unit_to_string(PRINT_OPTION::ONLY_NEGATIVE_POWER_INV, T{}...);
+        return trim(unit_to_string(PRINT_OPTION::ONLY_POSTIVE_POWER, T{}...))+"/"+trim(unit_to_string(PRINT_OPTION::ONLY_NEGATIVE_POWER_INV, T{}...));
     } else {
-        return unit_to_string(PRINT_OPTION::ALL_WITH_POWER, T{}...);
+        return trim(unit_to_string(PRINT_OPTION::ALL_WITH_POWER, T{}...));
     }
     return "";
 }
@@ -316,4 +338,4 @@ typename std::enable_if< is_dh_quantity<T>::value &&  !is_time_quantity<T>::valu
 }
 
 
-#endif /* DH_UNITS_RATIO_TO_STRING_INCLUDED */
+#endif /* DH_UNITS_FORMAT_QUANTITY_INCLUDED */

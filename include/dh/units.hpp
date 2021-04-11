@@ -17,6 +17,7 @@
 #include "dh/units/imperial_units.hpp"
 #include "dh/units/math.hpp"
 #include "dh/units/format_quantity.hpp"
+#include "dh/units/format_quantity_libfmt.hpp"
 #include "dh/units/quantity_cast.hpp"
 
 

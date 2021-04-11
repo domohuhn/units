@@ -40,7 +40,7 @@ The following features are supported:
     * sin, cos, tan for angles
     * exp, log for dimensionless quantities
     * pow, sqrt if the resulting powers are integers (e.g. si::meter sqrt(si::square_meter))
-* Printing of the types and units
+* Printing of the types and units with to_string, cout<< and libfmt!
 * Seamless integration with std::chrono
 * Fully functional in C++11
 * [High quality error messages!](https://godbolt.org/z/1hdo1954h)
@@ -117,6 +117,20 @@ Lossless conversions are either conversions between two quantities with floating
 These are the same requirements for conversions as in std::chrono.
 
 A special case are the different temperatures Celsius, Fahrenheit and Kelvin. These units can only be converted using quantity_cast<>.
+
+### Formatting a quantity to a string
+There are three supported methods to format a quantity:
+
+```c++
+si::meter<double> len(25);
+si::second<double> ti(1);
+std::string str = to_string(len/ti);
+std::cout<< str <<'\n'; // prints 25.000000 m/s
+std::cout<< len/ti <<'\n'; // prints 25 m/s
+
+// using libfmt 
+fmt::print("{}\n",  len/ti ); // prints 25 m/s
+```
 
 ## Extending the library types
 If you want to add your own units to extend the types provided by the library, here is an example how to do it:
@@ -269,6 +283,15 @@ target_link_libraries(main PUBLIC dh::units)
 
 Usage examples for the library can be found in the samples directory.
 
+# Dependencies
+
+The core functionality can be used without any additional dependencies. 
+There are some dependencies when building with certain options, but all of them can be disabled:
+| Dependency        | Used for              | Disable with                                                             |
+| :---              | :----                 | :----                                                                    |
+| google test       | unit tests            | CMake Option DH_UNITS_BUILD_TESTS = OFF                                  |
+| google benchmark  | benchmarks            | CMake Option DH_UNITS_BUILD_BENCHMAKRS = OFF                             |
+| libfmt            | output formatting     | Compile with define DH_UNITS_DISABLE_LIBFMT  (set if package fmt not found by cmake)  |
 
 # Tests
 

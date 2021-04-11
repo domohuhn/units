@@ -407,28 +407,6 @@ TEST(Units, ChronoIntegration) {
 
 }
 
-TEST(Units, Print) {
-    std::cout<<"seconds "<< millisecond<>(42.0) <<"\n";
-    std::cout<<"seconds "<< second<>(42.0) <<"\n";
-    std::cout<<"min "<< minute<>(42.0) <<"\n";
-    std::cout<<"hour "<< hour<>(42.0) <<"\n";
-    std::cout<<"day "<< day<>(42.0) <<"\n";
-    std::cout<<"week "<< week<>(42.0) <<"\n";
-    std::cout<<"month "<< month<>(42.0) <<"\n";
-    std::cout<<"year "<< year<>(42.0) <<"\n";
-    std::cout<<"celsius "<< imperial::fahrenheit<>(42.0) <<"\n";
-    std::cout<<"fahrenheit "<< celsius<>(42.0) <<"\n";
-    std::cout<<"as "<< arcsecond<>(42.0) <<"\n";
-    std::cout<<"am "<< arcminute<>(42.0) <<"\n";
-    std::cout<<"deg "<< degree<>(42.0) <<"\n";
-    std::cout<<"rad "<< radian<>(42.0) <<"\n";
-    std::cout<<"mps "<< meter_per_second<>(42.0) <<"\n";
-    std::cout<<"kph "<< kilometer_per_hour<>(42.0) <<"\n";
-    std::cout<<"colomb "<< coulomb<>(43) <<"\n";
-    std::cout<<"hz "<< hertz<>(44) <<"\n";
-    std::cout<<"nautical "<<imperial::nautical_mile<>{} <<"\n";
-}
-
 
 TEST(Units, QuantityCast) {
     si::celsius<double> c(0.0);

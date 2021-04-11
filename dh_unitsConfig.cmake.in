@@ -1,6 +1,10 @@
 get_filename_component(dh_units_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include(CMakeFindDependencyMacro)
 
+if("@DH_NEEDS_FMT_DEPENDENCY@" STREQUAL "ON")
+    find_dependecy(fmt)
+endif()
+
 if(NOT TARGET dh::units)
     include("${dh_units_CMAKE_DIR}/dh_units-targets.cmake")
 endif()
