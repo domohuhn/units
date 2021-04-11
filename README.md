@@ -131,6 +131,7 @@ std::cout<< len/ti <<'\n'; // prints 25 m/s
 // using libfmt 
 fmt::print("{}\n",  len/ti ); // prints 25 m/s
 ```
+[Run code on compiler explorer](https://godbolt.org/z/GPKPEYGG7)
 
 ## Extending the library types
 If you want to add your own units to extend the types provided by the library, here is an example how to do it:
