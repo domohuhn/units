@@ -1,5 +1,7 @@
 # C++11 physical units library
 
+[![linux-gcc](https://github.com/domohuhn/units/actions/workflows/linux-gcc.yml/badge.svg?branch=main)](https://github.com/domohuhn/units/actions/workflows/linux-gcc.yml)
+
 This project is a physical units library for C++11. It defines strong types for quantities like meter or kilogram, and checks for correctness of your calculations are performed at compile time.
 The reasoning to check the units at compile time is to prevent errors in the interface usage. If your function takes 4 double, then it is easy to mix up the expected units.
 This happend for example to the Mars Climate Orbirter, which crashed due to wrong interface usage (https://en.wikipedia.org/wiki/Mars_Climate_Orbiter). Preventing these kinds of errors is the main idea behind this library.
