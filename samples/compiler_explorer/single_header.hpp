@@ -5,7 +5,9 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#ifdef DH_UNITS_ENABLE_LIBFMT
 #include <fmt/format.h>
+#endif
 #include <iosfwd>
 #include <locale>
 #include <ratio>
