@@ -144,9 +144,7 @@ endif()
 #
 
 add_executable(dh_samples samples/extension.cpp samples/mpl.cpp)
-target_include_directories(dh_samples PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
+target_link_libraries(dh_samples PRIVATE dh::units)
 
 #
 # Benchmarks
