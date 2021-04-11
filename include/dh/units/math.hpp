@@ -100,6 +100,24 @@ math_return_t<T> log (const T& value) {
     return std::log(math_return_t<T>(value.count()));
 }
 
+
+template <typename quantity, typename power>
+using exponentiation_result_t = dh::units::exponentiation_result::template 
+    type<dh::units::quantity, typename quantity::value_type, typename quantity::unit_list, power > ;
+
+
+template<typename T,intmax_t num,intmax_t den, 
+    typename = typename std::enable_if< is_dh_quantity<T>::value && quantity_is_exponentiable<T,std::ratio<num,den>>::value >::type>
+exponentiation_result_t<T,std::ratio<num,den>> pow (const T& value, const std::ratio<num,den>& /*ratio*/) {
+    return exponentiation_result_t<T,std::ratio<num,den>>(std::pow(math_return_t<T>(value.count()), math_return_t<T>(num)/math_return_t<T>(den)));
+}
+
+template<typename T,
+    typename = typename std::enable_if< is_dh_quantity<T>::value && quantity_is_exponentiable<T,std::ratio<1,2>>::value >::type>
+exponentiation_result_t<T,std::ratio<1,2>> sqrt (const T& value) {
+    return exponentiation_result_t<T,std::ratio<1,2>>(std::sqrt(math_return_t<T>(value.count())));
+}
+
 }
 }
 

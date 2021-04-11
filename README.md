@@ -39,6 +39,7 @@ The following features are supported:
     * min, max, abs, clamp
     * sin, cos, tan for angles
     * exp, log for dimensionless quantities
+    * pow, sqrt if the resulting powers are integers (e.g. si::meter sqrt(si::square_meter))
 * Printing of the types and units
 * Seamless integration with std::chrono
 * Fully functional in C++11

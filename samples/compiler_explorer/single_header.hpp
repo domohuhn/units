@@ -1461,6 +1461,20 @@ struct quantity_convertible_to_unit<T,Unit, dh::mpl::void_t<typename T::value_ty
     constexpr static bool value = lists_contain_same_dimensions< typename T::unit_list, dh::mpl::list<Unit>>::value;
 };
 
+template<typename ratio, typename U1>
+struct unit_power_is_divisible {
+    constexpr static bool value = ((U1::power_value * ratio::num) % ratio::den)==0;
+};
+
+template <typename quantity, typename ratio >
+struct quantity_is_exponentiable
+{
+    constexpr static bool value =  mpl::invoke_t< typename quantity::unit_list, 
+        mpl::transform<mpl::bind<mpl::wrap<unit_power_is_divisible>,ratio> >,
+        mpl::accumulate_value<mpl::logical_and<bool>>
+        >::value;
+};
+
 }
 }
 
@@ -1712,6 +1726,24 @@ struct extract_base_units_impl<false> {
 
 template <typename... pack>
 using extract_base_units_t = typename extract_base_units_impl<mpl::is_greater(sizeof...(pack),0)>::template type<pack...>;
+
+template<typename ratio>
+struct modifiy_unit_power {
+    template<typename Unit>
+    using type = unit<typename Unit::dimension_type, 
+        typename Unit::prefix_type,
+        Unit::power_value*ratio::num/ratio::den>;
+};
+
+struct exponentiation_result {
+
+    template<typename unit_list, typename ratio>
+    using transformed_list = mpl::invoke_t<unit_list, mpl::transform<modifiy_unit_power<ratio>> >;
+
+    template<template<typename...> class container,typename first,typename unit_list, typename ratio>
+    using type = mpl::invoke_t<transformed_list<unit_list,ratio>,mpl::push_front<first,container>>;
+
+};
 
 }
 }
@@ -2353,6 +2385,22 @@ math_return_t<T> exp (const T& value) {
 template<typename T, typename = typename std::enable_if<is_dh_quantity<T>::value && T::unit_list::empty >::type>
 math_return_t<T> log (const T& value) {
     return std::log(math_return_t<T>(value.count()));
+}
+
+template <typename quantity, typename power>
+using exponentiation_result_t = dh::units::exponentiation_result::template 
+    type<dh::units::quantity, typename quantity::value_type, typename quantity::unit_list, power > ;
+
+template<typename T,intmax_t num,intmax_t den, 
+    typename = typename std::enable_if< is_dh_quantity<T>::value && quantity_is_exponentiable<T,std::ratio<num,den>>::value >::type>
+exponentiation_result_t<T,std::ratio<num,den>> pow (const T& value, const std::ratio<num,den>& /*ratio*/) {
+    return exponentiation_result_t<T,std::ratio<num,den>>(std::pow(math_return_t<T>(value.count()), math_return_t<T>(num)/math_return_t<T>(den)));
+}
+
+template<typename T,
+    typename = typename std::enable_if< is_dh_quantity<T>::value && quantity_is_exponentiable<T,std::ratio<1,2>>::value >::type>
+exponentiation_result_t<T,std::ratio<1,2>> sqrt (const T& value) {
+    return exponentiation_result_t<T,std::ratio<1,2>>(std::sqrt(math_return_t<T>(value.count())));
 }
 
 }

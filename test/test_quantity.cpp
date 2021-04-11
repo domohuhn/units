@@ -459,6 +459,10 @@ TEST(Units, QuantityCast) {
 
 }
 
+
+// tests that should cause a compilation error
+static_assert( !std::is_convertible<millimeter<int>,meter<int> >::value , "you should not be able to convert these values!");
+
 TEST(Units, IntegralConversion) {
     si::meter<int> m(2);
     si::millimeter<int> mm = m;
@@ -467,4 +471,25 @@ TEST(Units, IntegralConversion) {
     mm = si::millimeter<int>(1100);
     m = quantity_cast<si::meter<int>>(mm);
     ASSERT_EQ(m.count(),1);
+}
+
+
+TEST(Units, Pow) {
+    si::meter<int> m(2);
+    si::square_meter<int> m2 = pow(m,std::ratio<2,1>{});
+    si::cubic_meter<int> m3 = pow(m,std::ratio<3,1>{});
+    ASSERT_EQ(m2.count(),4);
+    ASSERT_EQ(m3.count(),8);
+
+    si::meter<int> ma  = pow(m2,std::ratio<1,2>{});
+    si::meter<int> mb  = pow(m3,std::ratio<1,3>{});
+    ASSERT_EQ(ma.count(),2);
+    ASSERT_EQ(mb.count(),2);
+}
+
+
+TEST(Units, Sqrt) {
+    si::square_meter<double> m2(9);
+    si::meter<double> m  = sqrt(m2);
+    ASSERT_EQ(m.count(),3.0);
 }

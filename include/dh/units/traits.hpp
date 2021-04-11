@@ -149,6 +149,21 @@ struct quantity_convertible_to_unit<T,Unit, dh::mpl::void_t<typename T::value_ty
 };
 
 
+template<typename ratio, typename U1>
+struct unit_power_is_divisible {
+    constexpr static bool value = ((U1::power_value * ratio::num) % ratio::den)==0;
+};
+
+template <typename quantity, typename ratio >
+struct quantity_is_exponentiable
+{
+    constexpr static bool value =  mpl::invoke_t< typename quantity::unit_list, 
+        mpl::transform<mpl::bind<mpl::wrap<unit_power_is_divisible>,ratio> >,
+        mpl::accumulate_value<mpl::logical_and<bool>>
+        >::value;
+};
+
+
 }
 }
 

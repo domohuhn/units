@@ -257,6 +257,28 @@ struct extract_base_units_impl<false> {
 template <typename... pack>
 using extract_base_units_t = typename extract_base_units_impl<mpl::is_greater(sizeof...(pack),0)>::template type<pack...>;
 
+
+
+template<typename ratio>
+struct modifiy_unit_power {
+    template<typename Unit>
+    using type = unit<typename Unit::dimension_type, 
+        typename Unit::prefix_type,
+        Unit::power_value*ratio::num/ratio::den>;
+};
+
+struct exponentiation_result {
+
+    template<typename unit_list, typename ratio>
+    using transformed_list = mpl::invoke_t<unit_list, mpl::transform<modifiy_unit_power<ratio>> >;
+
+    template<template<typename...> class container,typename first,typename unit_list, typename ratio>
+    using type = mpl::invoke_t<transformed_list<unit_list,ratio>,mpl::push_front<first,container>>;
+
+};
+
+
+
 }
 }
 

@@ -65,3 +65,10 @@ using extracted = extract_base_units_t<unit_kelvin,unit_newton,unit_meter>;
 
 static_assert( lists_contain_same_dimensions<extracted,list8>::value          , "extraction should work");
 static_assert( is_derived_unit<unit_newton>::value ,"this is a derived unit");
+
+static_assert( quantity_is_exponentiable<si::meter<double>,std::ratio<2,1>>::value , "this should work");
+static_assert( !quantity_is_exponentiable<si::meter<double>,std::ratio<1,2>>::value , "this should fail");
+static_assert( quantity_is_exponentiable<si::square_meter<double>,std::ratio<2,1>>::value , "this should work");
+static_assert( quantity_is_exponentiable<si::square_meter<double>,std::ratio<1,2>>::value , "this should work");
+static_assert( quantity_is_exponentiable<si::cubic_meter<double>,std::ratio<1,3>>::value , "this should work");
+static_assert( !quantity_is_exponentiable<si::square_meter<double>,std::ratio<1,3>>::value , "this should fail");
