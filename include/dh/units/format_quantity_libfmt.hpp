@@ -12,7 +12,7 @@
 
 
 
-#ifndef DH_UNITS_DISABLE_LIBFMT
+#ifdef DH_UNITS_ENABLE_LIBFMT
 #include <fmt/format.h>
 #include "dh/units/format_quantity.hpp"
 
@@ -21,7 +21,7 @@ struct fmt::formatter<quantity, typename std::enable_if<dh::units::is_dh_quantit
 {
     std::string value_format;
 
-    constexpr auto parse(format_parse_context& ctx)
+    auto parse(format_parse_context& ctx) -> decltype(std::end(ctx))
     {
         value_format= "{:";        
         for (auto it= std::begin(ctx); it != std::end(ctx); ++it) {
@@ -35,7 +35,8 @@ struct fmt::formatter<quantity, typename std::enable_if<dh::units::is_dh_quantit
     }
 
   template <typename FormatContext>
-  auto format(const quantity& q, FormatContext& ctx) {
+  auto format(const quantity& q, FormatContext& ctx) -> decltype(format_to(ctx.out(),value_format,q.count())) 
+  {
     return format_to(
         ctx.out(),
         value_format+" {}",

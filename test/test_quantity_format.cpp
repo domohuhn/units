@@ -59,7 +59,7 @@ TEST(FormatUnits, ToString) {
     std::cout<<"nautical     : \""<<     to_string(imperial::nautical_mile<int>{}) <<"\"\n";
 }
 
-#ifndef DH_UNITS_DISABLE_LIBFMT
+#ifdef DH_UNITS_ENABLE_LIBFMT
 TEST(FormatUnits, Libfmt) {
     fmt::print("milliseconds : \"{}\"\n", millisecond<>(42.0));
     fmt::print("seconds      : \"{}\"\n",     second<>(42.0) );
