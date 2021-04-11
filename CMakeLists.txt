@@ -15,72 +15,72 @@ option(DH_UNITS_BUILD_BENCHMAKRS "Build the benchmarks for the hashes module" ON
 include(FetchContent)
 
 add_library(mpl INTERFACE)
-
-
-add_library(mpl_files
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/accumulate.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/bind.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/comparisons.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/conditional.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/core.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/count_if.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/filter.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/find_if.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/front.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/functors.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/invoke.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/is_unique.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/join.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/list.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/min_element.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/pop_front.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/push_back.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/push_front.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/transform.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/unwrap.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/void_t.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/wrap.hpp
-
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/accumulate_impl.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/find_if_impl.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/invoke_impl.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/is_unique_impl.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/join_impl.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/pop_front_impl.hpp
-)
-
 target_include_directories(mpl INTERFACE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 	$<INSTALL_INTERFACE:include>
 )
-
 target_compile_features(mpl INTERFACE cxx_std_11)
 add_library(dh::mpl ALIAS mpl)
-target_link_libraries(mpl_files PUBLIC dh::mpl)
-set_target_properties(mpl_files PROPERTIES LINKER_LANGUAGE CXX)
-
 
 add_library(units INTERFACE)
-
-add_library(units_files
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units.hpp
-
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/declaration_macros.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/dimensions.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/format_quantity.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/imperial_units.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/math.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/quantity_conversion.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/quantity.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/si_units.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/traits.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/unit.hpp
-)
-
 target_link_libraries(units INTERFACE dh::mpl)
-set_target_properties(units_files PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(units_files PUBLIC dh::mpl)
 add_library(dh::units ALIAS units)
+
+if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+# some IDEs only show the files listed here when generating a solution
+	add_library(mpl_files
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/accumulate.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/bind.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/comparisons.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/conditional.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/core.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/count_if.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/filter.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/find_if.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/front.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/functors.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/invoke.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/is_unique.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/join.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/list.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/min_element.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/pop_front.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/push_back.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/push_front.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/transform.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/unwrap.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/void_t.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/wrap.hpp
+
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/accumulate_impl.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/find_if_impl.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/invoke_impl.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/is_unique_impl.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/join_impl.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/mpl/detail/pop_front_impl.hpp
+	)
+
+	target_link_libraries(mpl_files PUBLIC dh::mpl)
+	set_target_properties(mpl_files PROPERTIES LINKER_LANGUAGE CXX)
+	
+	add_library(units_files
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units.hpp
+
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/declaration_macros.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/dimensions.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/format_quantity.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/imperial_units.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/math.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/quantity_conversion.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/quantity.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/si_units.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/traits.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/include/dh/units/unit.hpp
+	)
+	
+	set_target_properties(units_files PROPERTIES LINKER_LANGUAGE CXX)
+	target_link_libraries(units_files PUBLIC dh::mpl)
+endif()
 
 #
 # Tests
