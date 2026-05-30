@@ -6,7 +6,7 @@
 
 This project is a physical units library for C++11. It defines strong types for quantities like meter or kilogram, and checks for correctness of your calculations are performed at compile time.
 The reasoning to check the units at compile time is to prevent errors in the interface usage. If your function takes 4 double, then it is easy to mix up the expected units.
-This happend for example to the Mars Climate Orbirter, which crashed due to wrong interface usage (https://en.wikipedia.org/wiki/Mars_Climate_Orbiter). Preventing these kinds of errors is the main idea behind this library.
+This happened for example to the Mars Climate Orbiter, which crashed due to wrong interface usage (https://en.wikipedia.org/wiki/Mars_Climate_Orbiter). Preventing these kinds of errors is the main idea behind this library.
 A major design goal was to create a similar interface and user experience as std::chrono, while providing good error messages and to be reasonable fast to compile.
 
 Here is a code sample:
@@ -32,7 +32,7 @@ The library is a header only library, so you can simply include it in your proje
 The following features are supported:
 * Creating types with arbitrary units
 * The underlying type for the numerical values is a template parameter, so it can be exchanged
-* Compile-time checking of compability and creation of conversion functions
+* Compile-time checking of compatibility and creation of conversion functions
 * Creating arbitrary math expressions using +, -, * and /
 * Types are always promoted to the more accurate type (both the value representation and the prefixes)
 * Math functions: 
@@ -81,7 +81,7 @@ Note: If you can use C++20, you should have a look at https://github.com/mpusz/u
 | Resistance             | ohm                                    | nano - giga       |
 | Charge                 | coulomb                                | nano - giga       |
 | Capacitance            | farad                                  |                   |
-| magenteic flux         | weber                                  | nano - giga       |
+| magnetic flux          | weber                                  | nano - giga       |
 | magnetic flux density  | tesla                                  | nano - giga       |
 | Inductivity            | henry                                  | nano - giga       |
 
@@ -103,7 +103,7 @@ Note: If you can use C++20, you should have a look at https://github.com/mpusz/u
 
 ### Conversions between units
 
-Quantities of different units can be converted to each other. Lossless conversions are performed implictly, but you have to specifically ask for a lossy conversions
+Quantities of different units can be converted to each other. Lossless conversions are performed implicitly, but you have to specifically ask for a lossy conversions
 by using quantity_cast<>. Here is an example:
 
 ```c++
@@ -150,10 +150,10 @@ using unit_pixel = dh::units::unit<pixel_dimension, std::ratio<1,1>, 1>;
 // define an alias for the new unit
 using pixel = dh::units::quantity<int,unit_pixel>;
 ```
-That's it! You can now use all functionality provided by the library. For example, multipling the pixel with another quantity will change the unit list accordingly. You actually only need the struct with the static name() function, both aliases are only for convinience. All units defined in this library use the quantity template, which uses the underlying representation and a variadic list of units as template arguments.
+That's it! You can now use all functionality provided by the library. For example, multiplying the pixel with another quantity will change the unit list accordingly. You actually only need the struct with the static name() function, both aliases are only for convenience. All units defined in this library use the quantity template, which uses the underlying representation and a variadic list of units as template arguments.
 
-There is a slight problem with this method howerever: The error messages for wrong assignments will be very long, because you will see all the template arguments and instantiations.
-The only method to get good error messages in many cases is to use inheritance. The base class has no virtual functions, so neiter the size of the type or the runtime behaviour should change.
+There is a slight problem with this method however: The error messages for wrong assignments will be very long, because you will see all the template arguments and instantiations.
+The only method to get good error messages in many cases is to use inheritance. The base class has no virtual functions, so neither the size of the type or the runtime behavior should change.
 
 ```c++
 // if you want nice error messages, you will have to use inheritance:
@@ -215,7 +215,7 @@ DH_DECLARE_DERIVED_DIMENSION_ALL_PREFIXES(pixel_per_squaremeter, "pxm" , unit_pi
 The unit conversion is done via template meta programming. A library providing the features required for the units functionality can be found in the directory mpl. 
 
 
-As an example of what you can do, consider the following case: You recieve a type as template parameter and you know that it will be a vector with a tuple.
+As an example of what you can do, consider the following case: You receive a type as template parameter and you know that it will be a vector with a tuple.
 You want to remove certain elements from the tuple, change types matching a predicate to another type and turn it into a tuple with vectors of the remaining types.
 First, we will have to define the functors to use:
 
@@ -301,16 +301,16 @@ Unit tests are done with googletest. Sources for the tests are in the directory 
 
 # Benchmarks
 
-There are basic benchmarks in the benchmark directory. Running the benchmarks on my machine with gcc 7 gives:
+There are basic benchmarks in the benchmark directory. Running the benchmarks results in these values (normalized to the baseline):
 
 | Benchmark       | Baseline     | Strong units |
 | :---            | :----        | :----        |
-| addition        | 6.44 ns      | 6.49 ns      |
-| multiplication  | 6.48 ns      | 6.48 ns      |
-| division        | 17.6 ns      |  17.7 ns     |
+| addition        | 1.0          | 1.02         |
+| multiplication  | 1.0          | 1.0          |
+| division        | 1.0          | 1.0          |
 
-As you can see, there is no difference between using raw doubles as baseline or the units library.
+There is no significant difference once fluctuations between runs are taken into account. 
 
 # License
-This project is licensed under the Mozilla Public Lencse 2.0. Therefore, you should be able to use it in pretty much any other project for any purpose.
+This project is licensed under the Mozilla Public License 2.0. Therefore, you should be able to use it in pretty much any other project for any purpose.
 See the LICENSE.md for details.
