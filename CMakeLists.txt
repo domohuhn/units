@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.14)
 project(units VERSION 1.0.0)
 
 option(DH_UNITS_BUILD_TESTS "Build the tests for the hashes module" ON)
-option(DH_UNITS_BUILD_BENCHMAKRS "Build the benchmarks for the hashes module" ON)
+option(DH_UNITS_BUILD_BENCHMARKS "Build the benchmarks for the hashes module" ON)
 
 include(FetchContent)
 
@@ -102,7 +102,7 @@ if(BUILD_TESTING AND DH_UNITS_BUILD_TESTS)
 	FetchContent_Declare(
 	googletest
 	GIT_REPOSITORY https://github.com/google/googletest.git
-	GIT_TAG v1.10.x
+	GIT_TAG v1.17.x
 	)
 
 	FetchContent_GetProperties(googletest)
@@ -161,11 +161,11 @@ target_link_libraries(dh_samples PRIVATE dh::units)
 # Benchmarks
 #
 
-if(DH_UNITS_BUILD_BENCHMAKRS)
+if(DH_UNITS_BUILD_BENCHMARKS)
 	FetchContent_Declare(
 	googlebenchmark
 	GIT_REPOSITORY https://github.com/google/benchmark.git
-	GIT_TAG v1.5.2
+	GIT_TAG v1.9.5
 	)
 
 	FetchContent_GetProperties(googlebenchmark)
